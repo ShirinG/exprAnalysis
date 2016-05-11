@@ -1,0 +1,168 @@
+---
+title: "exprAnalysis-Vignette"
+author: "Shirin Glander"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: spacelab
+    highlight: kate
+  pdf_document:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{exprAnalysis-Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+-----------
+
+<br>
+
+## Installing package
+
+```{r library_private, echo=FALSE, include=FALSE, cache=FALSE}
+require(devtools)
+devtools::load_all()
+```
+
+```{r library_officical, eval=FALSE}
+devtools::install_github("ShirinG/exprAnalysis")
+
+library("exprAnalysis")
+```
+
+This package combines functions from various packages used for analysis of expression data from NGS or expression chips.
+
+So far, this package is only implemented for human data!
+
+-----------
+
+<br>
+
+# Input data
+
+Takes any expression data matrix containing numeric values as expression measures (e.g. read count data, FPKM values, Illumina expression data).
+
+- Rownames should be gene or isoform identifiers (e.g. gene names)
+- Colnames should be sample IDs (sample names)
+
+
+This package contains an example matrix of randomly generated expression data (called **"Random_exprMatrix.txt"**).
+
+```{r input}
+expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
+```
+
+-----------
+
+<br>
+
+# Functions
+
+See package help (?functionname) for detailed description of functions.
+
+-----------
+
+<br>
+
+## Variance vs mean gene expression across samples
+
+Plots variance against mean gene expression across samples and calculates the correlation of a linear regression model.
+
+```{r var_vs_mean, fig.width=5, fig.height=5}
+var_vs_mean(expmatrix)
+```
+
+-----------
+
+<br>
+
+## Principle Component Analysis
+
+Uses functions as implemented by **"pcaGoPromoter"**.
+
+You can only plot the principle components using:
+
+```{r pca_plot, eval=TRUE, fig.width=6, fig.height=6}
+groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
+
+pca_plot(expmatrix, groups)
+```
+
+or you can plot the principle components and calculate TF and GO term enrichments of genes (defaults to top 2.5%) with highest and lowest loadings. With this function, the ouput files are directly saved to .pdf and .txt (by default to working directory).
+
+```{r pca_plot_enrich, eval=FALSE}
+pca_plot_enrich(expmatrix, groups)
+```
+
+-----------
+
+<br>
+
+## Hierarchical Clustering and outlier detection
+
+Uses adjacency matrix function from **"WGCNA"** and hierarchical clustering from **"flashClust"**.
+
+```{r wgcna_sample_dendrogram, eval=TRUE, fig.width=8, fig.height=5}
+datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolPS = c(rep(0, 4), rep(1, 4), rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12), rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), row.names = colnames(expmatrix))
+
+wgcna_sample_dendrogram(expmatrix, datTraits)
+```
+
+-----------
+
+<br>
+
+## Differential expression analysis
+
+```{r diff_limma, eval=TRUE, warning=FALSE}
+design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
+              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
+              rep(1, 4)), row.names = colnames(expmatrix))
+groupcomparisons=c("TolLPS-Ctrl", "TollMRP8-Ctrl", "ActLPS-Ctrl")
+DEgenes_all <- diff_limma_all(expmatrix, design, groupcomparisons)
+
+comparison="TolLPS-Ctrl"
+DEgenes_pw <- diff_limma_pairwise(expmatrix, design, groupcomparisons)
+```
+
+-----------
+
+<br>
+
+## Pathview
+
+For Toll-like-receptor signaling:
+
+```{r pathview, eval=FALSE}
+pathview_func(DE_genes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
+```
+
+-----------
+
+<br>
+
+## Heatmaps
+
+```{r heatmaps, eval=TRUE}
+heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
+```
+
+
+```{r render, eval=FALSE, echo=FALSE}
+rmarkdown::render('vignettes/ExpressionAnalysisVignette.Rmd', output_file = 'U:/ExpressionAnalysis_test/ExpressionAnalysisVignette.html')
+
+browseVignettes(package = 'ExpressionAnalysis')
+```
+
+-----------
+
+<br>
+
+## Session Info
+
+```{r sessionInfo, echo=TRUE}
+sessionInfo()
+```

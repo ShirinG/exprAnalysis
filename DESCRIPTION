@@ -1,0 +1,31 @@
+Package: exprAnalysis
+Type: Package
+Title: A package for analysing RNA-seq and expression array data
+Version: 0.1.0
+Author: person("Shirin", "Glander", email = "shirin.glander@wwu.de", role = c("aut", "cre"))
+Description: This package combines tools and functions for RNA-seq and expression array data analysis, like PCA, heatmaps, etc.
+License: GPL-3
+Maintainer: Shirin Glander <shirin.glander@wwu.de>
+LazyData: TRUE
+Imports:
+    pcaGoPromoter,
+    flashClust,
+    dynamicTreeCut,
+    limma,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    pathview,
+    gplots,
+    RColorBrewer
+Depends:
+    WGCNA,
+    matrixStats,
+    scales
+Suggests:
+    dplyr,
+    knitr,
+    rmarkdown
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+URL: https://github.com/ShirinG/ExpressionAnalysis
+BugReports: https://github.com/ShirinG/ExpressionAnalysis/issues
