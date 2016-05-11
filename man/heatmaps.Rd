@@ -10,9 +10,13 @@ heatmaps(expmatrix, method_dist = "canberra", method_hclust = "ward.D2",
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}
 
-\item{method_dist}{the distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given.}
+\item{method_dist}{the distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Defaults to canberra.}
 
-\item{method_hclust}{the agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC).}
+\item{method_hclust}{the agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). Defaults to ward.D2.}
+
+\item{samplecols}{Colors indicating samples' treatment group.}
+
+\item{main}{Main title for heatmap plot. Defaults to "Heatmap of genes".}
 }
 \value{
 Returns a heatmap plot.

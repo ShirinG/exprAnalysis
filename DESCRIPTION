@@ -16,11 +16,11 @@ Imports:
     org.Hs.eg.db,
     pathview,
     gplots,
-    RColorBrewer
-Depends:
+    RColorBrewer,
     WGCNA,
     matrixStats,
     scales
+Depends:
 Suggests:
     dplyr,
     knitr,
