@@ -10,8 +10,8 @@
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".
 #' @return Differential expression output table for all group comparisons.
 #' @examples
-#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
-#'              header = TRUE, sep = "\t")
+#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
+#'              package = "exprAnalysis"), header = TRUE, sep = "\t")
 #' design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
 #'              rep(1, 4)), row.names = colnames(expmatrix))
@@ -32,13 +32,13 @@ diff_limma_all <- function(expmatrix, design, groupcomparisons, p.value=0.05, lf
   fit <- limma::eBayes(limma::contrasts.fit(fit, cont.matrix))
 
   resultDiffGenes <- limma::decideTests(fit, p.value=p.value, lfc=lfc, adjust.method="BH")
-  pdf(file=file.path(projectfolder, "Diff_limma", "DiffAllGroups_vennDiagram.pdf"))
+  grDevices::pdf(file=file.path(projectfolder, "Diff_limma", "DiffAllGroups_vennDiagram.pdf"))
   limma::vennDiagram(resultDiffGenes)
-  dev.off()
+  grDevices::dev.off()
 
   DiffAllGroups_Ftest <- limma::topTable(fit, confint=TRUE, p.value=p.value, lfc=lfc, adjust.method="BH", number=Inf)
 
-  write.table(data.frame(DiffAllGroups_Ftest), file.path(projectfolder, "Diff_limma", "DiffAllGroups_Ftest.txt"), col.names = T, row.names = F, sep = "\t")
+  utils::write.table(data.frame(DiffAllGroups_Ftest), file.path(projectfolder, "Diff_limma", "DiffAllGroups_Ftest.txt"), col.names = T, row.names = F, sep = "\t")
   cat("\n-------------------------\n", "Differential Expression Analysis Output of all groups (limma Ftest) were saved to", file.path(projectfolder, "Diff_limma", "DiffAllGroups_Ftest.txt"), "\n-------------------------\n")
 
   return(data.frame(DiffAllGroups_Ftest))

@@ -19,8 +19,14 @@ Imports:
     RColorBrewer,
     WGCNA,
     matrixStats,
-    scales
+    scales,
+    grDevices,
+    graphics,
+    utils,
+    stats,
+    devtools
 Depends:
+    R (>= 2.10)
 Suggests:
     dplyr,
     knitr,

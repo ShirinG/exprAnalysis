@@ -16,8 +16,8 @@ Returns a plot of mean against variance of gene expression across samples and co
 This function plots mean against variance of gene expression across samples and calculates the linear correlation.
 }
 \examples{
-expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "ExpressionAnalysis"),
-             header = TRUE, sep = "\\t")
+expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
+             package = "exprAnalysis"), header = TRUE, sep = "\\t")
 var_vs_mean(expmatrix)
 }
 

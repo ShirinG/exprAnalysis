@@ -25,6 +25,8 @@ Returns a heatmap plot.
 This calculates the differentially expressed genes among pairwise group comparisons (one comparison at a time).
 }
 \examples{
+expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
+             header = TRUE, sep = "\\t")
 heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
 }
 

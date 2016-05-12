@@ -10,8 +10,8 @@
 #' @param datTraits Numeric matrix of phenotypes belonging to each sample in columns of matrix.
 #' @return A sample dendrogram plot with sample heatmap.
 #' @examples
-#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
-#'              header = TRUE, sep = "\t")
+#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
+#'              package = "exprAnalysis"), header = TRUE, sep = "\t")
 #' datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
 #'              rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), row.names = colnames(expmatrix))

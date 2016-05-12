@@ -23,7 +23,7 @@ This is a collection of functions from the package "pcaGoPromoter".
 It calculates the principle components and plots them.
 }
 \examples{
-expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "ExpressionAnalysis"),
+expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
              header = TRUE, sep = "\\t")
  groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
  pca_plot(expmatrix, groups)

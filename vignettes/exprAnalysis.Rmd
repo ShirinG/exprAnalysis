@@ -23,7 +23,7 @@ vignette: >
 ## Installing package
 
 ```{r library_private, echo=FALSE, include=FALSE, cache=FALSE}
-require(devtools)
+#require(devtools)
 devtools::load_all()
 ```
 
@@ -52,7 +52,9 @@ Takes any expression data matrix containing numeric values as expression measure
 This package contains an example matrix of randomly generated expression data (called **"Random_exprMatrix.txt"**).
 
 ```{r input}
-expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
+#expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
+
+data("expmatrix")
 ```
 
 -----------

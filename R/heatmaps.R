@@ -15,7 +15,7 @@
 #' @export
 heatmaps <- function(expmatrix, method_dist = "canberra", method_hclust = "ward.D2", samplecols, main = "Heatmap of genes"){
   # transpose the matrix and cluster columns
-  hc.cols <- hclust(dist(t(as.matrix(expmatrix)), method = method_dist), method = method_hclust)
+  hc.cols <- stats::hclust(dist(t(as.matrix(expmatrix)), method = method_dist), method = method_hclust)
 
   cols <- rev(grDevices::colorRampPalette(RColorBrewer::brewer.pal(9,"RdYlBu"))(100))
 

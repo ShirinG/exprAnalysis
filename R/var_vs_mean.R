@@ -5,8 +5,8 @@
 #' @param expmatrix An input matrix with gene names as row names and sample names as column names.
 #' @return Returns a plot of mean against variance of gene expression across samples and cor.test output of the linear correlation.
 #' @examples
-#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
-#'              header = TRUE, sep = "\t")
+#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
+#'              package = "exprAnalysis"), header = TRUE, sep = "\t")
 #' var_vs_mean(expmatrix)
 #' @export
 var_vs_mean <- function(expmatrix){

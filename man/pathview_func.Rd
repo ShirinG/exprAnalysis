@@ -7,7 +7,7 @@
 pathview_func(DE_genes_pw, pathway.id, out.suffix)
 }
 \arguments{
-\item{DE_genes_pw}{List of differentially expressed genes as output given by diff_limma_pw(). Rownames should be gene names (SMYBOLS).}
+\item{DE_genes_pw}{List of differentially expressed genes as output given by diff_limma_pairwise(). Rownames should be gene names (SMYBOLS).}
 
 \item{pathway.id}{KEGG pathway identification number.}
 
@@ -20,6 +20,7 @@ Three output files are produced for each pathway: An .xml, a .png of the pathway
 This produces pathview plots of differentially expressed genes and their fold changes for given pathways.
 }
 \examples{
-pathview_func(DE_genes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS") #Toll-like-receptor signaling
+pathview_func(DE_genes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
+                           #Toll-like-receptor signaling
 }
 

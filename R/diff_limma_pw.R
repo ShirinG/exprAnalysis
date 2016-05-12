@@ -10,8 +10,8 @@
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".
 #' @return Differential expression output table for the given comparison. The table and Venn diagram are saved to files in the folder "diff_limma" and the table is also returned by the function.
 #' @examples
-#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
-#'              header = TRUE, sep = "\t")
+#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
+#'              package = "exprAnalysis"), header = TRUE, sep = "\t")
 #' design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
 #'              rep(1, 4)), row.names = colnames(expmatrix))
@@ -32,13 +32,13 @@ diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=0.05, lfc
   fit <- limma::eBayes(limma::contrasts.fit(fit, cont.matrix))
 
   resultDiffGenes <- limma::decideTests(fit, p.value=p.value, lfc=lfc, adjust.method="BH")
-  pdf(file=file.path(projectfolder, "Diff_limma", paste0(comparison, "_Diff_vennDiagram.pdf")))
+  grDevices::pdf(file=file.path(projectfolder, "Diff_limma", paste0(comparison, "_Diff_vennDiagram.pdf")))
   limma::vennDiagram(resultDiffGenes)
-  dev.off()
+  grDevices::dev.off()
 
   Diff_Ftest <- limma::topTable(fit, confint=TRUE, p.value=p.value, lfc=lfc, adjust.method="BH", number=Inf)
 
-  write.table(data.frame(Diff_Ftest), file.path(projectfolder, "Diff_limma", "Diff_Ftest.txt"), col.names = T, row.names = F, sep = "\t")
+  utils::write.table(data.frame(Diff_Ftest), file.path(projectfolder, "Diff_limma", "Diff_Ftest.txt"), col.names = T, row.names = F, sep = "\t")
   cat("\n-------------------------\n", "Differential Expression Analysis Output of", comparison, "groups (limma Ftest) were saved to", file.path(projectfolder, "Diff_limma", paste0(comparison, "_Diff_Ftest.txt")), "\n-------------------------\n")
 
   return(data.frame(Diff_Ftest))
