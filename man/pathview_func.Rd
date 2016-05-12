@@ -4,10 +4,10 @@
 \alias{pathview_func}
 \title{pathview_func (from pathview functions).}
 \usage{
-pathview_func(DE_genes_pw, pathway.id, out.suffix)
+pathview_func(DEgenes_pw, pathway.id, out.suffix)
 }
 \arguments{
-\item{DE_genes_pw}{List of differentially expressed genes as output given by diff_limma_pairwise(). Rownames should be gene names (SMYBOLS).}
+\item{DEgenes_pw}{List of differentially expressed genes as output given by diff_limma_pairwise(). Rownames should be gene names (SMYBOLS).}
 
 \item{pathway.id}{KEGG pathway identification number.}
 
@@ -19,9 +19,11 @@ Three output files are produced for each pathway: An .xml, a .png of the pathway
 \description{
 This produces pathview plots of differentially expressed genes and their fold changes for given pathways.
 }
+\details{
+If you get the error message(s) data set 'korg' not found and/or data set 'bods' not found, it didn't properly extract these datasets from pathview package. Run data(korg) and data(bods) manually!
+}
 \examples{
-data("DEgenes_pw")
-pathview_func(DE_genes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
+pathview_func(DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
                            #Toll-like-receptor signaling
 }
 

@@ -140,7 +140,7 @@ DEgenes_pw <- diff_limma_pairwise(expmatrix, design, groupcomparisons)
 For Toll-like-receptor signaling:
 
 ```{r pathview, eval=FALSE}
-pathview_func(DE_genes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
+pathview_func(DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
 ```
 
 -----------
