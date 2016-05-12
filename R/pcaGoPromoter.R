@@ -16,8 +16,6 @@
 #' @param projectfolder File path where to save the tables to. Defaults to working directory. Here, it saves the output to a subfolder called "pcaGoPromoter".
 #' @return A PCA plot and tables of enriched TFs and GO terms.
 #' @examples
-#'  expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
-#'                header = TRUE, sep = "\t")
 #'  groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
 #'  pca_plot_enrich(expmatrix, groups)
 #' @export

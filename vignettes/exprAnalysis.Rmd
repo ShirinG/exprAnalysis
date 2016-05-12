@@ -54,7 +54,8 @@ This package contains an example matrix of randomly generated expression data (c
 ```{r input}
 #expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
 
-data("expmatrix")
+data(expmatrix)
+data(DEgenes_pw)
 ```
 
 -----------
@@ -119,7 +120,7 @@ wgcna_sample_dendrogram(expmatrix, datTraits)
 
 ## Differential expression analysis
 
-```{r diff_limma, eval=TRUE, warning=FALSE}
+```{r diff_limma, eval=FALSE, warning=FALSE}
 design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
               rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
               rep(1, 4)), row.names = colnames(expmatrix))
@@ -154,7 +155,7 @@ heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", 
 
 
 ```{r render, eval=FALSE, echo=FALSE}
-rmarkdown::render('vignettes/ExpressionAnalysisVignette.Rmd', output_file = 'U:/ExpressionAnalysis_test/ExpressionAnalysisVignette.html')
+rmarkdown::render('vignettes/exprAnalysis.Rmd', output_file = 'U:/exprAnalysis_test/exprAnalysisVignette.html')
 
 browseVignettes(package = 'ExpressionAnalysis')
 ```

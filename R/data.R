@@ -23,3 +23,21 @@
 #' }
 #' @source Randomly generated expression data (R)
 "expmatrix"
+
+#' Output data frame from diff_limma_pairwise()
+#'
+#' A dataset containing output data frame from diff_limma_pairwise().
+#'
+#' @format A data frame with 9956 rows and 8 variables. Rownames show gene names.
+#' \describe{
+#'   \item{logFC}{log fold change}
+#'   \item{CI.L}{left confidence interval}
+#'   \item{CI.R}{right confidence interval}
+#'   \item{AveExpr}{Average expression}
+#'   \item{t}{t statstics}
+#'   \item{P.Value}{p-value}
+#'   \item{adj.P.Val}{adjusted p-value}
+#'   \item{B}{B statistics}
+#' }
+#' @source Output data frame from diff_limma_pairwise() (R package "exprAnalysis")
+"DEgenes_pw"

@@ -9,8 +9,6 @@
 #' @param main Main title. Defaults to "PCA plot".
 #' @return A PCA plot.
 #' @examples
-#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"),
-#'              header = TRUE, sep = "\t")
 #'  groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
 #'  pca_plot(expmatrix, groups)
 #' @export

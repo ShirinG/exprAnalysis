@@ -20,6 +20,7 @@ Three output files are produced for each pathway: An .xml, a .png of the pathway
 This produces pathview plots of differentially expressed genes and their fold changes for given pathways.
 }
 \examples{
+data("DEgenes_pw")
 pathview_func(DE_genes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
                            #Toll-like-receptor signaling
 }

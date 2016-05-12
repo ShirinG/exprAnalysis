@@ -27,8 +27,7 @@ Differential expression output table for all group comparisons.
 This calculates the differentially expressed genes among all group comparisons.
 }
 \examples{
-expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
-             package = "exprAnalysis"), header = TRUE, sep = "\\t")
+data("expmatrix")
 design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
              rep(1, 4)), row.names = colnames(expmatrix))

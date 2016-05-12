@@ -10,8 +10,6 @@
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".
 #' @return Differential expression output table for all group comparisons.
 #' @examples
-#' expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt",
-#'              package = "exprAnalysis"), header = TRUE, sep = "\t")
 #' design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
 #'              rep(1, 4)), row.names = colnames(expmatrix))
