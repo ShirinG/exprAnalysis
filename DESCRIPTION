@@ -30,8 +30,9 @@ Depends:
 Suggests:
     dplyr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 RoxygenNote: 5.0.1
 VignetteBuilder: knitr
-URL: https://github.com/ShirinG/ExpressionAnalysis
-BugReports: https://github.com/ShirinG/ExpressionAnalysis/issues
+URL: https://github.com/ShirinG/exprAnalysis
+BugReports: https://github.com/ShirinG/exprAnalysis/issues

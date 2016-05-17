@@ -41,3 +41,36 @@
 #' }
 #' @source Output data frame from diff_limma_pairwise() (R package "exprAnalysis")
 "DEgenes_pw"
+
+
+#' Output data frame from diff_limma_pw_unfiltered()
+#'
+#' A dataset containing output data frame from diff_limma_pw_unfiltered().
+#'
+#' @format A data frame with 10000 rows and 8 variables. Rownames show gene names.
+#' \describe{
+#'   \item{logFC}{log fold change}
+#'   \item{CI.L}{left confidence interval}
+#'   \item{CI.R}{right confidence interval}
+#'   \item{AveExpr}{Average expression}
+#'   \item{t}{t statstics}
+#'   \item{P.Value}{p-value}
+#'   \item{adj.P.Val}{adjusted p-value}
+#'   \item{B}{B statistics}
+#' }
+#' @source Output data frame from diff_limma_pw_unfiltered() (R package "exprAnalysis")
+"Allgenes_limma_pw"
+
+
+#' Transcription factors from mouse and human
+#'
+#' A dataset containing transcription factors from mouse and human (from Bonn)
+#'
+#' @format A data frame with 929 rows and 3 variables. Rownames show gene names.
+#' \describe{
+#'   \item{Mouse}{Mouse TFs}
+#'   \item{Human}{Human TFs}
+#'   \item{Merged_Taxa}{Type of TF}
+#' }
+#' @source Bonner list used for TF networks
+"TFs"

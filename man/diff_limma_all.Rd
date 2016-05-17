@@ -21,7 +21,7 @@ diff_limma_all(expmatrix, design, groupcomparisons, p.value = 0.05,
 \item{projectfolder}{File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".}
 }
 \value{
-Differential expression output table for all group comparisons.
+Differential expression output table for all group comparisons - outputs information for all genes, including non-significant ones.
 }
 \description{
 This calculates the differentially expressed genes among all group comparisons.

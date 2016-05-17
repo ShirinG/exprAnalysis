@@ -51,11 +51,12 @@ Takes any expression data matrix containing numeric values as expression measure
 
 This package contains an example matrix of randomly generated expression data (called **"Random_exprMatrix.txt"**).
 
-```{r input}
+```{r input, include=FALSE}
 #expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
+```
 
+```{r input_data}
 data(expmatrix)
-data(DEgenes_pw)
 ```
 
 -----------
@@ -128,7 +129,16 @@ groupcomparisons=c("TolLPS-Ctrl", "TollMRP8-Ctrl", "ActLPS-Ctrl")
 DEgenes_all <- diff_limma_all(expmatrix, design, groupcomparisons)
 
 comparison="TolLPS-Ctrl"
-DEgenes_pw <- diff_limma_pairwise(expmatrix, design, groupcomparisons)
+DEgenes_pw <- diff_limma_pairwise(expmatrix, design, comparison)
+
+Allgenes_limma_pw <- diff_limma_pw_unfiltered(expmatrix, design, comparison)
+```
+
+Example output files from diff_limma functions have been saved to the package data and can be accessed via:
+
+```{r diff_limma_output, eval=FALSE}
+data(DEgenes_pw)
+data(Allgenes_limma_pw)
 ```
 
 -----------
@@ -154,15 +164,47 @@ heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", 
 ```
 
 
+-----------
+
+<br>
+
+## TF networks
+
+This function produced two output files:
+
+- The .expression matrix of TF expression data. 
+
+It will have to be opened with Biolayout3D: 
+Set Minimum Correlation and Correlation metric (by default 0.7 and Pearson). Then choose a suitable correlation coefficient (Graph Degree Distribution should be close to linear). Save the resulting network as a TGF file.
+
+Open the TGF file in Cytoscape: Open network from file. Then got to Advanced Options: untick "Use first column names" and add " to "Other:". Now set Column 2 as Source and Column 5 as Target.
+
+- The node annotation table in .txt format.
+
+In cytoscape, open table from file, import data as Node Table Columns. You can then customize the look of your network.
+
+For example, go to Style and 
+
+- go to Border Paint, Column: DE, Mapping type: Discrete and choose a color for 1 and 0
+
+- go to Fill Color, Column logFC, Mapping Type: Continuous and choose colors.
+
+```{r networks, eval=FALSE}
+TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
+```
+
+![TF network Pearson 0.7](CopyOfnetwork_test.png)
+
+-----------
+
+<br>
+
 ```{r render, eval=FALSE, echo=FALSE}
 rmarkdown::render('vignettes/exprAnalysis.Rmd', output_file = 'U:/exprAnalysis_test/exprAnalysisVignette.html')
 
 browseVignettes(package = 'ExpressionAnalysis')
 ```
 
------------
-
-<br>
 
 ## Session Info
 
