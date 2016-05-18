@@ -28,7 +28,11 @@ devtools::load_all()
 ```
 
 ```{r library_officical, eval=FALSE}
-devtools::install_github("ShirinG/exprAnalysis")
+# make sure the workspace is in pristine condition
+rm(list=ls(all=TRUE))
+
+# install package from github
+devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
 
 library("exprAnalysis")
 ```
@@ -56,7 +60,7 @@ This package contains an example matrix of randomly generated expression data (c
 ```
 
 ```{r input_data}
-data(expmatrix)
+data("expmatrix")
 ```
 
 -----------
@@ -70,6 +74,8 @@ See package help (?functionname) for detailed description of functions.
 -----------
 
 <br>
+
+# Exploratory analysis of all genes
 
 ## Variance vs mean gene expression across samples
 
@@ -119,7 +125,29 @@ wgcna_sample_dendrogram(expmatrix, datTraits)
 
 <br>
 
-## Differential expression analysis
+## Heatmaps
+
+```{r heatmaps, eval=TRUE}
+heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
+```
+
+-----------
+
+<br>
+
+## WGCNA
+
+
+
+-----------
+
+<br>
+
+# Differential expression analysis
+
+## DE analyis using limma
+
+For normalized expression data (FPKM from Cufflinks or intensities from expression chip arrays).
 
 ```{r diff_limma, eval=FALSE, warning=FALSE}
 design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
@@ -137,9 +165,30 @@ Allgenes_limma_pw <- diff_limma_pw_unfiltered(expmatrix, design, comparison)
 Example output files from diff_limma functions have been saved to the package data and can be accessed via:
 
 ```{r diff_limma_output, eval=FALSE}
-data(DEgenes_pw)
-data(Allgenes_limma_pw)
+data("DEgenes_pw")
+data("Allgenes_limma_pw")
 ```
+
+-----------
+
+<br>
+
+## DE analyis using DESeq2
+
+For raw read count data.
+
+-----------
+
+<br>
+
+## Gene annotations
+
+Can be used to add e.g. ENTREZ ID, ENSEMBL ID, etc. to gene name.
+
+```{r geneAnnotations, eval=FALSE}
+geneAnnotations(input=DEgenes_pw, keys=row.names(DEgenes_pw), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+```
+
 
 -----------
 
@@ -157,12 +206,19 @@ pathview_func(DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
 
 <br>
 
-## Heatmaps
+## Venn diagrams
 
-```{r heatmaps, eval=TRUE}
-heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
+With **"gplots"** (installed by package).
+
+Example:
+
+```{r venn, eval=TRUE}
+venn_list <- list(genelist1 = na.omit(rownames(DEgenes_pw)[1:50]), genelist2 = na.omit(rownames(DEgenes_pw)[30:80]), genelist3 = na.omit(rownames(DEgenes_pw)[48:100]))
+
+gplots::venn(venn_list, show.plot=TRUE, small=0.7, showSetLogicLabel=FALSE, simplify = TRUE)
+
+mtext("If you want a header, put it here", side=3, cex = 0.8)
 ```
-
 
 -----------
 
@@ -194,6 +250,18 @@ TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 ```
 
 ![TF network Pearson 0.7](CopyOfnetwork_test.png)
+
+-----------
+
+<br>
+
+## Hypergeometric test for enrichment
+
+Analogous to Fisher's Exact Test.
+
+```{r phyper, eval=FALSE}
+phyper(SampleSuccesses -1, PopulationSuccesses, PopulationSize - PopulationSuccesses, sampleSize, lower.tail = FALSE)
+```
 
 -----------
 

@@ -16,7 +16,7 @@
 #' comparison="TolLPS-Ctrl"
 #' diff_limma_pairwise(expmatrix, design, comparison)
 #' @export
-diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=0.05, lfc=1.5, projectfolder = getwd()){
+diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=log2(0.05), lfc=1.5, projectfolder = getwd()){
 
   if (!file.exists(file.path(projectfolder, "Diff_limma"))) {dir.create(file.path(projectfolder, "Diff_limma")) }
 
@@ -51,6 +51,8 @@ diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=0.05, lfc
 #' @param expmatrix An input matrix with gene names as row names and sample names as column names.
 #' @param design Binary design matrix of samples' treatment groups.
 #' @param comparison Single comparisons for differential expression analysis.
+#' @param p.value Significance threshold. Defaults to 0.05
+#' @param lfc Log fold change threshold. Defaults to 1.5
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".
 #' @return Unfiltered Differential expression output table for the given comparison. The table and Venn diagram are saved to files in the folder "diff_limma" and the table is also returned by the function.
 #' @examples
@@ -60,7 +62,7 @@ diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=0.05, lfc
 #' comparison="TolLPS-Ctrl"
 #' diff_limma_pw_unfiltered(expmatrix, design, comparison)
 #' @export
-diff_limma_pw_unfiltered <- function(expmatrix, design, comparison, projectfolder = getwd()){
+diff_limma_pw_unfiltered <- function(expmatrix, design, comparison, p.value=0.05, lfc=log2(1.5), projectfolder = getwd()){
 
   if (!file.exists(file.path(projectfolder, "Diff_limma"))) {dir.create(file.path(projectfolder, "Diff_limma")) }
 

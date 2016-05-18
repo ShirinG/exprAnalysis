@@ -4,8 +4,8 @@
 \alias{diff_limma_pw_unfiltered}
 \title{diff_limma_pw_unfiltered (from limma functions).}
 \usage{
-diff_limma_pw_unfiltered(expmatrix, design, comparison,
-  projectfolder = getwd())
+diff_limma_pw_unfiltered(expmatrix, design, comparison, p.value = 0.05,
+  lfc = log2(1.5), projectfolder = getwd())
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}
@@ -13,6 +13,10 @@ diff_limma_pw_unfiltered(expmatrix, design, comparison,
 \item{design}{Binary design matrix of samples' treatment groups.}
 
 \item{comparison}{Single comparisons for differential expression analysis.}
+
+\item{p.value}{Significance threshold. Defaults to 0.05}
+
+\item{lfc}{Log fold change threshold. Defaults to 1.5}
 
 \item{projectfolder}{File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".}
 }

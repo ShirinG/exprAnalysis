@@ -4,7 +4,7 @@
 \alias{diff_limma_pairwise}
 \title{diff_limma_pairwise (from limma functions).}
 \usage{
-diff_limma_pairwise(expmatrix, design, comparison, p.value = 0.05,
+diff_limma_pairwise(expmatrix, design, comparison, p.value = log2(0.05),
   lfc = 1.5, projectfolder = getwd())
 }
 \arguments{

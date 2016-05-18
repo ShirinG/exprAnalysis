@@ -19,7 +19,7 @@
 Output data frame from diff_limma_pw_unfiltered() (R package "exprAnalysis")
 }
 \usage{
-Allgenes_limma_pw
+data(Allgenes_limma_pw)
 }
 \description{
 A dataset containing output data frame from diff_limma_pw_unfiltered().

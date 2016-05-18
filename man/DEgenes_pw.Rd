@@ -19,7 +19,7 @@
 Output data frame from diff_limma_pairwise() (R package "exprAnalysis")
 }
 \usage{
-DEgenes_pw
+data(DEgenes_pw)
 }
 \description{
 A dataset containing output data frame from diff_limma_pairwise().

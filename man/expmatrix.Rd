@@ -27,7 +27,7 @@
 Randomly generated expression data (R)
 }
 \usage{
-expmatrix
+data(expmatrix)
 }
 \description{
 A dataset containing randomly generated expression data for 4 replicates of 4 treatment groups.

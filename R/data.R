@@ -22,6 +22,7 @@
 #'   \item{TollMRP8_3}{Treatment TolMRP8/S100A8 replicate 4}
 #' }
 #' @source Randomly generated expression data (R)
+#' @usage data(expmatrix)
 "expmatrix"
 
 #' Output data frame from diff_limma_pairwise()
@@ -40,6 +41,7 @@
 #'   \item{B}{B statistics}
 #' }
 #' @source Output data frame from diff_limma_pairwise() (R package "exprAnalysis")
+#' @usage data(DEgenes_pw)
 "DEgenes_pw"
 
 
@@ -59,6 +61,7 @@
 #'   \item{B}{B statistics}
 #' }
 #' @source Output data frame from diff_limma_pw_unfiltered() (R package "exprAnalysis")
+#' @usage data(Allgenes_limma_pw)
 "Allgenes_limma_pw"
 
 
@@ -73,4 +76,5 @@
 #'   \item{Merged_Taxa}{Type of TF}
 #' }
 #' @source Bonner list used for TF networks
+#' @usage data(TFs)
 "TFs"

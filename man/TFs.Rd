@@ -14,7 +14,7 @@
 Bonner list used for TF networks
 }
 \usage{
-TFs
+data(TFs)
 }
 \description{
 A dataset containing transcription factors from mouse and human (from Bonn)
