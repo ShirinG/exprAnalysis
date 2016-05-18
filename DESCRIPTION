@@ -13,6 +13,8 @@ Imports:
     dynamicTreeCut,
     limma,
     AnnotationDbi,
+    clusterProfiler,
+    DOSE,
     org.Hs.eg.db,
     pathview,
     gplots,

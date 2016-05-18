@@ -20,7 +20,7 @@ TF_networks <- function(expmatrix, nodeAnno, adjPcol="adj.P.Val", p.value=0.05, 
 
   if (!file.exists(file.path(projectfolder, "Networks"))) {dir.create(file.path(projectfolder, "Networks")) }
 
-  TFs_human <- TFs[,2:3]
+  TFs_human <- base::get("TFs")[,2:3]
 
   TF_gene_exprs <- merge(TFs_human,expmatrix, by.x = "Human", by.y = "row.names", all = FALSE)
 

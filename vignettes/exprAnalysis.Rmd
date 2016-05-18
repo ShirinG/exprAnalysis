@@ -45,18 +45,27 @@ So far, this package is only implemented for human data!
 
 <br>
 
+# Functions
+
+See package help (?functionname) for detailed description of functions.
+
+-----------
+
+<br>
+
 # Input data
 
-Takes any expression data matrix containing numeric values as expression measures (e.g. read count data, FPKM values, Illumina expression data).
+Takes an expression data matrix containing numeric values as expression measures (e.g. read count data, FPKM values, Illumina expression data).
 
 - Rownames should be gene or isoform identifiers (e.g. gene names)
 - Colnames should be sample IDs (sample names)
 
 
-This package contains an example matrix of randomly generated expression data (called **"Random_exprMatrix.txt"**).
+This package contains an example matrix of randomly generated expression data (called **"expmatrix"**).
 
 ```{r input, include=FALSE}
 #expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
+# doesn't exist any more (is now stored as raw data)
 ```
 
 ```{r input_data}
@@ -67,9 +76,62 @@ data("expmatrix")
 
 <br>
 
-# Functions
+## Starting from FPKM data
 
-See package help (?functionname) for detailed description of functions.
+If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data as the **expmatrix** example.
+
+-----------
+
+<br>
+
+## Starting from count data
+
+If you want to do count data analysis, you can either produce a count matrix (e.g. with HTSeq) and proceed to DESeq2 analysis or you can produce the count table directly from the bam files and then proceed to DESeq2:
+
+```{r countdata_bam, include=FALSE}
+
+
+```
+
+-----------
+
+<br>
+
+## Starting from Affymetrix expression chips
+
+If you have CEL files, start with the following code to produce the expression matrix and then treat it like the **expmatrix** example:
+
+```{r Affymetrix, include=FALSE}
+
+
+```
+
+-----------
+
+<br>
+
+## Starting from Illumina expression chips
+
+If you have Illumina intensity data, load it into GenomeStudio first:
+
+- Open New Project -> Gene Expression
+- Choose Assay Type -> Next
+- Choose Project Repo and name the project -> Next
+- On the left side, mark all folders containing data, select "All" and import them into the right window -> Next
+- Name Group Set, on the left side, mark all folders containing data, select "All" and import them into the right window (optionally, you can directly create groups here) -> Next
+- For now, don't use normalisation and don' substract background
+- Choose appropriate Content Descriptor (e.g. HumanHT-12_V4_0_R1_15002873_B.bgx) -> Finish
+- Export SampleProbeProfile.txt: Choose columns AVG_Signal, Detection Pval, BEAD_STDERR and Avg_NBEADS
+- Export ControlProbeProfile.txt: Choose columns AVG_Signal and Detection Pval
+- You also need the Samplesheet.csv
+- Follow Frank's Pipeline until you obtain **BSDlog2norm**. From here on, you could treat it like the **expmatrix** example.
+
+-----------
+
+<br>
+
+# Batch correction
+
 
 -----------
 
@@ -189,6 +251,61 @@ Can be used to add e.g. ENTREZ ID, ENSEMBL ID, etc. to gene name.
 geneAnnotations(input=DEgenes_pw, keys=row.names(DEgenes_pw), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
 ```
 
+-----------
+
+<br>
+
+## Enrichment Analysis using clusterPofiler
+
+```{r clusterProfiler, eval=FALSE}
+
+x <- rownames(DEgenes_pw)[1:500]
+eg = clusterProfiler::bitr(x, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
+
+geneList <- merge(eg, DEgenes_pw[1:500,"logFC", drop = FALSE], by.x = "SYMBOL", by.y = "row.names", all = TRUE)
+gene <- geneList$ENTREZID
+
+#gene <- geneList$ENTREZID[abs(geneList$logFC) > 2]
+
+## Group GO
+ggo <- clusterProfiler::groupGO(gene     = gene,
+                                OrgDb    = org.Hs.eg.db,
+                                ont      = "BP",
+                                level    = 3,
+                                readable = TRUE)
+head(summary(ggo))
+barplot(ggo, drop=TRUE, showCategory=12)
+
+# GO over-representation test
+ego <- clusterProfiler::enrichGO(gene          = gene,
+                                 #universe      = names(geneList),
+                                 OrgDb         = org.Hs.eg.db,
+                                 ont           = "BP",
+                                 pAdjustMethod = "BH",
+                                 pvalueCutoff  = 0.01,
+                                 qvalueCutoff  = 0.05, 
+                                 readable      = TRUE)
+head(summary(ego))
+barplot(ego, showCategory=8)
+dotplot(ego)
+enrichMap(ego)
+#cnetplot(ego, categorySize="pvalue", foldChange=geneList)
+plotGOgraph(ego)
+
+# enrichGO test the whole GO corpus and enriched result may contains very general terms. With dropGO function, user can remove specific GO terms or GO level from results obtained from both enrichGO and compareCluster.
+
+
+## KEGG over-representation test
+kk <- enrichKEGG(gene         = gene,
+                 organism     = 'hsa',
+                 pvalueCutoff = 0.05)
+head(summary(kk))
+barplot(kk, showCategory=8)
+dotplot(kk)
+#cnetplot(kk, categorySize="geneNum", foldChange=geneList)
+
+```
+
 
 -----------
 
@@ -206,7 +323,7 @@ pathview_func(DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
 
 <br>
 
-## Venn diagrams
+## Venn diagrams and Biological theme comparison
 
 With **"gplots"** (installed by package).
 
@@ -220,9 +337,42 @@ gplots::venn(venn_list, show.plot=TRUE, small=0.7, showSetLogicLabel=FALSE, simp
 mtext("If you want a header, put it here", side=3, cex = 0.8)
 ```
 
+```{r compareCluster, eval=FALSE}
+## Biological theme comparison
+compGO <- clusterProfiler::compareCluster(geneCluster   = venn_list,
+                                          fun           = "enrichGO",
+                                          ont           = "BP",
+                                          OrgDb         = org.Hs.eg.db,
+                                          qvalueCutoff  = 0.001,
+                                          pAdjustMethod = "BH",
+                                          readable      = TRUE)
+
+
+compKEGG <- clusterProfiler::compareCluster(geneCluster   = venn_list,
+                                            fun           = "enrichKEGG",
+                                            qvalueCutoff  = 0.05,
+                                            pAdjustMethod = "BH")
+compKEGG <- clusterProfiler::setReadable(compKEGG, OrgDb = org.Hs.eg.db)
+
+
+compMKEGG <- clusterProfiler::compareCluster(geneCluster   = venn_list,
+                                             fun           = "enrichMKEGG",
+                                             organism='hsa', minGSSize=1)
+
+compDO <- clusterProfiler::compareCluster(geneCluster   = venn_list,
+                                          fun           = "enrichDO",
+                                          qvalueCutoff  = 0.05,
+                                          pAdjustMethod = "BH",
+                                          readable      = TRUE)
+
+# For visualisation see Enrichment Analysis using clusterProfiler
+```
+
 -----------
 
 <br>
+
+# Networks
 
 ## TF networks
 
@@ -254,6 +404,30 @@ TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 -----------
 
 <br>
+
+## BiNGO (Cytoscape)
+
+- Go to Cytoscape
+
+- Apps -> BiNGO
+
+- The BiNGO Settings panel pops up. Start by filling in a name for your cluster. This name will be used for creating the output file and the visualization of the results in Cytoscape.
+
+- Check Paste Genes from Text and paste gene names into field below
+
+- We want to assess overrepresentation of GO categories, and we want to visualize the results in Cytoscape. The corresponding boxes are checked accordingly by default. Then select a statistical test (the Hypergeometric Test is exact and equivalent to an exact Fisher test, the Binomial Test is less accurate but quicker) and a multiple testing correction (we recommend Benjamini & Hochberg's FDR correction, the Bonferroni correction will be too conservative in most cases), and choose a significance level, e.g. 0.05. Since we only want to visualize those GO categories that are overrepresented after multiple testing correction, and their parents in the GO hierarchy, select the corresponding visualization option. We're interested in assessing the overrepresentation of functional categories in our cluster with respect to the whole genome, which is why we choose the Complete Annotation as the reference set. 
+
+- Select GO _Biological _Process from the ontology list, and Human from the organism list. We want to consider all evidence codes, so don't fill in anything in the evidence code box. 
+
+- Finally, select a directory to save the output file in (the file will be named test.bgo if you filled in test as a cluster name), and press Start BiNGO...
+ 
+- The program will inform you of its progress while parsing the annotations and calculating the tests, corrections and layout. Finally, a visualization of the overrepresented GO categories is created in Cytoscape. Uncolored nodes are not overrepresented, but they are the parents of overrepresented categories further down. Yellow nodes represent GO categories that are overrepresented at the significance level . For more significant p-values, the node color gets increasingly more orange (see also the Color Legend panel). If you'd like another layout, e.g. hierarchical, select the corresponding option from the Cytoscape Visualization menu. Regardless of the layout you choose, you'll probably have to tweak the nodes a little in order to avoid overlapping node labels. The list of significantly overrepresented functional categories is shown in the BiNGO output window (more information on the cluster and options you selected, and on which genes did not produce any annotation, is stored in the test.bgo file).
+
+-----------
+
+<br>
+
+# Other functions
 
 ## Hypergeometric test for enrichment
 

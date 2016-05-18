@@ -22,7 +22,7 @@ Three output files are produced for each pathway: An .xml, a .png of the pathway
 This produces pathview plots of differentially expressed genes and their fold changes for given pathways.
 }
 \details{
-If you get the error message(s) data set 'korg' not found and/or data set 'bods' not found, it didn't properly extract these datasets from pathview package. Run data(korg) and data(bods) manually!
+If you get the error message(s) data set 'korg' not found and/or data set 'bods' not found, it didn't properly extract these datasets from the pathview package. Run data(korg) and data(bods) manually!
 }
 \examples{
 pathview_func(DEgenes=DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")

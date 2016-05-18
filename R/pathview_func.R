@@ -2,7 +2,7 @@
 #'
 #' This produces pathview plots of differentially expressed genes and their fold changes for given pathways.
 #'
-#' @details If you get the error message(s) data set 'korg' not found and/or data set 'bods' not found, it didn't properly extract these datasets from pathview package. Run data(korg) and data(bods) manually!
+#' @details If you get the error message(s) data set 'korg' not found and/or data set 'bods' not found, it didn't properly extract these datasets from the pathview package. Run data(korg) and data(bods) manually!
 #'
 #' @param DEgenes List of differentially expressed genes as output given by diff_limma_pairwise(). Rownames should be gene names (SMYBOLS).
 #' @param logFCcolumn Name of column that contains log fold change information.
