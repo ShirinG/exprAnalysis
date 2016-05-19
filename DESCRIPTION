@@ -26,7 +26,13 @@ Imports:
     graphics,
     utils,
     stats,
-    devtools
+    devtools,
+    Rsamtools,
+    GenomicFeatures,
+    GenomicAlignments,
+    BiocParallel,
+    DESeq2,
+    SummarizedExperiment
 Depends:
     R (>= 2.10)
 Suggests:

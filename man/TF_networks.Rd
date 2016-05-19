@@ -4,19 +4,19 @@
 \alias{TF_networks}
 \title{TF_networks.}
 \usage{
-TF_networks(expmatrix, nodeAnno, adjPcol = "adj.P.Val", p.value = 0.05,
-  projectfolder = getwd())
+TF_networks(expmatrix, nodeAnno, GeneName = "row.names",
+  projectfolder = getwd(), outPrefix)
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}
 
 \item{nodeAnno}{A data frame with node annotation, e.g. logFC and differential expression (e.g. limma output). Rownames have to correspond to rownames of expmatrix!}
 
-\item{adjPcol}{Column name for adjusted p-values (used for creating a column "DE" in the output node annotation).}
-
-\item{p.value}{Significance threshold. Defaults to 0.05.}
+\item{GeneName}{Column name with Gene Symbol to be annotated to TF name.}
 
 \item{projectfolder}{File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Networks".}
+
+\item{outPrefix}{Prefix added to output name.}
 }
 \value{
 A .expression output matrix of gene expression of transkription factors in dataset used as Biolayout3D input.
@@ -31,6 +31,6 @@ Open the TGF file in Cytoscape: Open network from file. Then got to Advanced Opt
 Then open the node annotation table that was also saved by this function: Open table from file, import data as Node Table Columns. YOu can then customize the look of your network.
 }
 \examples{
-TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
+TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw, outPrefix="Test")
 }
 

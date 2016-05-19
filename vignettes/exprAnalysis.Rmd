@@ -22,6 +22,12 @@ vignette: >
 
 ## Installing package
 
+This package combines functions from various packages used for analysis of expression data from NGS or expression chips.
+
+So far, this package is only implemented for human data!
+
+The package can be installed via github:
+
 ```{r library_private, echo=FALSE, include=FALSE, cache=FALSE}
 #require(devtools)
 devtools::load_all()
@@ -37,17 +43,13 @@ devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
 library("exprAnalysis")
 ```
 
-This package combines functions from various packages used for analysis of expression data from NGS or expression chips.
-
-So far, this package is only implemented for human data!
-
 -----------
 
 <br>
 
 # Functions
 
-See package help (?functionname) for detailed description of functions.
+See package help (?functionname, ?data) for detailed description of functions and example datasets.
 
 -----------
 
@@ -59,7 +61,6 @@ Takes an expression data matrix containing numeric values as expression measures
 
 - Rownames should be gene or isoform identifiers (e.g. gene names)
 - Colnames should be sample IDs (sample names)
-
 
 This package contains an example matrix of randomly generated expression data (called **"expmatrix"**).
 
@@ -78,7 +79,7 @@ data("expmatrix")
 
 ## Starting from FPKM data
 
-If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data as the **expmatrix** example.
+If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data such as the **expmatrix** example.
 
 -----------
 
@@ -86,10 +87,31 @@ If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data 
 
 ## Starting from count data
 
-If you want to do count data analysis, you can either produce a count matrix (e.g. with HTSeq) and proceed to DESeq2 analysis or you can produce the count table directly from the bam files and then proceed to DESeq2:
+If you want to do count data analysis, you can either produce a count matrix (e.g. with HTSeq) and proceed to DESeq2 analysis or you can produce the count table directly from the bam files and then proceed to DESeq2. 
 
-```{r countdata_bam, include=FALSE}
+read_bam_to_countmatrix() returns a DESeq data frame that can directly be used with the DEseq2 pipeline. Or you can manually load the count matrix that was saved by read_bam_to_countmatrix() and then go to DESeqDataFrameFromMatrix().
 
+```{r countdata_bam, eval=FALSE}
+
+# Locate alignment files
+
+dir <- getwd()
+fileslist <- list.files(dir)
+filenames <- fileslist[grep(".*sorted.bam$", list.files(dir))]
+
+# Create a sample table
+
+samplename <- sub("_accepted_hits.sorted.bam", "", filenames)
+design <- c("Treatment", "Control")
+sampleid <- sub("Sample", "", samplename)
+
+sampleTable <- data.frame(row.names = samplename, sampleid = sampleid, filenames = filenames, colData = design, stringsAsFactors = F)
+
+#         sampleid                         filenames    colData
+#Sample1         1  Sample1_accepted_hits.sorted.bam  Treatment
+#Sample2         2  Sample2_accepted_hits.sorted.bam    Control
+
+data <- read_bam_to_countmatrix(sampleTable, gtffile = "/media/data/Public/ENSEMBL.rel.83/Homo_sapiens.GRCh38.83.gtf", projectfolder = getwd(), outPrefix="Test")
 
 ```
 

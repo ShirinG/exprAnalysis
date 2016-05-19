@@ -8,15 +8,15 @@
 #'
 #' @param expmatrix An input matrix with gene names as row names and sample names as column names.
 #' @param nodeAnno A data frame with node annotation, e.g. logFC and differential expression (e.g. limma output). Rownames have to correspond to rownames of expmatrix!
-#' @param adjPcol Column name for adjusted p-values (used for creating a column "DE" in the output node annotation).
-#' @param p.value Significance threshold. Defaults to 0.05.
+#' @param GeneName Column name with Gene Symbol to be annotated to TF name.
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Networks".
+#' @param outPrefix Prefix added to output name.
 #' @return A .expression output matrix of gene expression of transkription factors in dataset used as Biolayout3D input.
 #' And based on these TFs, it also produces a .txt with node annotations of e.g. logFC and differential expression (e.g. limma output)
 #' @examples
-#' TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
+#' TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw, outPrefix="Test")
 #' @export
-TF_networks <- function(expmatrix, nodeAnno, adjPcol="adj.P.Val", p.value=0.05, projectfolder = getwd()){
+TF_networks <- function(expmatrix, nodeAnno, GeneName = "row.names", projectfolder = getwd(), outPrefix){
 
   if (!file.exists(file.path(projectfolder, "Networks"))) {dir.create(file.path(projectfolder, "Networks")) }
 
@@ -24,15 +24,14 @@ TF_networks <- function(expmatrix, nodeAnno, adjPcol="adj.P.Val", p.value=0.05, 
 
   TF_gene_exprs <- merge(TFs_human,expmatrix, by.x = "Human", by.y = "row.names", all = FALSE)
 
-  utils::write.table(TF_gene_exprs, file.path(projectfolder, "Networks", "TF_gene_exprs.expression"), col.names = T, row.names = F, sep = "\t")
-  cat("\n-------------------------\n", "TF expression matrix saved to", file.path(projectfolder, "Networks", "TF_gene_exprs.expression"), "\n-------------------------\n")
+  utils::write.table(TF_gene_exprs, file.path(projectfolder, "Networks", paste0(outPrefix, "_TF_exprs.expression")), col.names = T, row.names = F, sep = "\t")
+  cat("\n-------------------------\n", "TF expression matrix saved to", file.path(projectfolder, "Networks", paste0(outPrefix, "_TF_exprs.expression")), "\n-------------------------\n")
 
 
-  DEunfiltered <- merge(TF_gene_exprs[,1:2], nodeAnno, by.x = "Human", by.y = "row.names", all = TRUE)
-  DEunfiltered$DE <- ifelse(DEunfiltered[,adjPcol] < p.value, "1", "0")
+  DEunfiltered <- merge(TF_gene_exprs[,1:2], nodeAnno, by.x = "Human", by.y = GeneName, all.x = TRUE, all.y = FALSE)
 
-  utils::write.table(DEunfiltered, file.path(projectfolder, "Networks", "TF_nodeAnno.txt"), col.names = T, row.names = F, sep = "\t", quote = F)
-  cat("\n-------------------------\n", "TF network node annotation saved to", file.path(projectfolder, "Networks", "TF_nodeAnno.txt"), "\n-------------------------\n")
+  utils::write.table(DEunfiltered, file.path(projectfolder, "Networks", paste0(outPrefix, "_TF_nodeAnno.txt")), col.names = T, row.names = F, sep = "\t", quote = F)
+  cat("\n-------------------------\n", "TF network node annotation saved to", file.path(projectfolder, "Networks", paste0(outPrefix, "_TF_nodeAnno.txt")), "\n-------------------------\n")
 
 }
 
