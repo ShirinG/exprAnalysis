@@ -5,7 +5,7 @@
 \title{diff_limma_all (from limma functions).}
 \usage{
 diff_limma_all(expmatrix, design, groupcomparisons, p.value = 0.05,
-  lfc = 1.5, projectfolder = getwd())
+  lfc = log2(1.5), projectfolder = getwd())
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}

@@ -1,13 +1,9 @@
-#' Randomly generated expression data
+#' Randomly generated expression data (normalized)
 #'
-#' A dataset containing randomly generated expression data for 4 replicates of 4 treatment groups.
+#' A dataset containing randomly generated normalized expression data in form for 4 replicates of 4 treatment groups.
 #'
 #' @format A data frame with 10000 rows and 16 variables. Rownames show gene names, Colnames are samples.
 #' \describe{
-#'   \item{ActLPS_0}{Treatment ActLPS replicate 1}
-#'   \item{ActLPS_1}{Treatment ActLPS replicate 2}
-#'   \item{ActLPS_2}{Treatment ActLPS replicate 3}
-#'   \item{ActLPS_3}{Treatment ActLPS replicate 4}
 #'   \item{Ctrl_0}{Treatment Ctrl replicate 1}
 #'   \item{Ctrl_1}{Treatment Ctrl replicate 2}
 #'   \item{Ctrl_2}{Treatment Ctrl replicate 3}
@@ -16,14 +12,45 @@
 #'   \item{TollLPS_1}{Treatment TolLPS replicate 2}
 #'   \item{TollLPS_2}{Treatment TolLPS replicate 3}
 #'   \item{TollLPS_3}{Treatment TolLPS replicate 4}
-#'   \item{TollMRP8_0}{Treatment TolMRP8/S100A8 replicate 1}
-#'   \item{TollMRP8_1}{Treatment TolMRP8/S100A8 replicate 2}
-#'   \item{TollMRP8_2}{Treatment TolMRP8/S100A8 replicate 3}
-#'   \item{TollMRP8_3}{Treatment TolMRP8/S100A8 replicate 4}
+#'   \item{TolS100A8_0}{Treatment TolMRP8/S100A8 replicate 1}
+#'   \item{TolS100A8_1}{Treatment TolMRP8/S100A8 replicate 2}
+#'   \item{TolS100A8_2}{Treatment TolMRP8/S100A8 replicate 3}
+#'   \item{TolS100A8_3}{Treatment TolMRP8/S100A8 replicate 4}
+#'   \item{ActLPS_0}{Treatment ActLPS replicate 1}
+#'   \item{ActLPS_1}{Treatment ActLPS replicate 2}
+#'   \item{ActLPS_2}{Treatment ActLPS replicate 3}
+#'   \item{ActLPS_3}{Treatment ActLPS replicate 4}
 #' }
 #' @source Randomly generated expression data (R)
 #' @usage data(expmatrix)
 "expmatrix"
+
+#' Randomly generated expression data (raw)
+#'
+#' A dataset containing randomly generated expression data in form of raw read counts for 4 replicates of 4 treatment groups.
+#'
+#' @format A data frame with 10000 rows and 16 variables. Rownames show gene names, Colnames are samples.
+#' \describe{
+#'   \item{Ctrl_0}{Treatment Ctrl replicate 1}
+#'   \item{Ctrl_1}{Treatment Ctrl replicate 2}
+#'   \item{Ctrl_2}{Treatment Ctrl replicate 3}
+#'   \item{Ctrl_3}{Treatment Ctrl replicate 4}
+#'   \item{TollLPS_0}{Treatment TolLPS replicate 1}
+#'   \item{TollLPS_1}{Treatment TolLPS replicate 2}
+#'   \item{TollLPS_2}{Treatment TolLPS replicate 3}
+#'   \item{TollLPS_3}{Treatment TolLPS replicate 4}
+#'   \item{TolS100A8_0}{Treatment TolMRP8/S100A8 replicate 1}
+#'   \item{TolS100A8_1}{Treatment TolMRP8/S100A8 replicate 2}
+#'   \item{TolS100A8_2}{Treatment TolMRP8/S100A8 replicate 3}
+#'   \item{TolS100A8_3}{Treatment TolMRP8/S100A8 replicate 4}
+#'   \item{ActLPS_0}{Treatment ActLPS replicate 1}
+#'   \item{ActLPS_1}{Treatment ActLPS replicate 2}
+#'   \item{ActLPS_2}{Treatment ActLPS replicate 3}
+#'   \item{ActLPS_3}{Treatment ActLPS replicate 4}
+#' }
+#' @source Randomly generated expression data (R)
+#' @usage data(countmatrix)
+"countmatrix"
 
 #' Output data frame from diff_limma_pairwise()
 #'

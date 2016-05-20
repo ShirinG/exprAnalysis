@@ -16,7 +16,9 @@
 #' The term 'mated pairs' refers to records paired with the algorithm described on the ?readGAlignmentsList man page.
 #' @return Writes the count matrix as .txt to file and returns a DESeq data set, which can then be used further with DESeq2.
 #' @examples
-#' read_bam_to_countmatrix(sampleTable, gtffile = "/media/data/Public/ENSEMBL.rel.83/Homo_sapiens.GRCh38.83.gtf", projectfolder = getwd(), outPrefix="Test")
+#' read_bam_to_countmatrix(sampleTable,
+#'                         gtffile = "Homo_sapiens.GRCh38.83.gtf",
+#'                         projectfolder = getwd(), outPrefix="Test")
 #' @export
 read_bam_to_countmatrix <- function(sampleTable, gtffile, projectfolder = getwd(), outPrefix, singleEnd=FALSE, ignore.strand=TRUE, fragments=TRUE){
 
@@ -30,7 +32,7 @@ read_bam_to_countmatrix <- function(sampleTable, gtffile, projectfolder = getwd(
     txdb <- GenomicFeatures::makeTxDbFromGFF(gtffile, format="gtf", circ_seqs=character())
 
     # The following line produces a GRangesList of all the exons grouped by gene. Each element of the list is a GRanges object of the exons for a gene.
-    ebg <- exonsBy(txdb, by="gene")
+    ebg <- GenomicFeatures::exonsBy(txdb, by="gene")
 
     ## Read counting step
     BiocParallel::register(BiocParallel::SerialParam())
@@ -43,13 +45,13 @@ read_bam_to_countmatrix <- function(sampleTable, gtffile, projectfolder = getwd(
                             ignore.strand=ignore.strand,
                             fragments=fragments)
 
-    colData(se) <- DataFrame(sampleTable)
+    SummarizedExperiment::colData(se) <- DataFrame(sampleTable)
 
     data <- DESeq2::DESeqDataSet(se, design = ~colData)
 
     if (!file.exists(file.path(projectfolder, "Countdata"))) {dir.create(file.path(projectfolder, "Countdata")) }
 
-    utils::write.table(SummarizedExperiment::assay(data), file.path(projectfolder, "Countdata", paste0(outPrefix, "_Summarize_overlaps_count_matrix.txt")), col.names = T, row.names = F, sep = "\t")
+    utils::write.table(SummarizedExperiment::assay(data), file.path(projectfolder, "Countdata", paste0(outPrefix, "_Summarize_overlaps_count_matrix.txt")), col.names = T, row.names = T, sep = "\t")
     cat("\n-------------------------\n", "Count matrix saved to", file.path(projectfolder, "Countdata", paste0(outPrefix, "_Summarize_overlaps_count_matrix.txt")), "\n-------------------------\n")
 
     return(data)

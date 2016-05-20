@@ -16,7 +16,7 @@ geneAnnotations(input, keys, column, keytype)
 \item{keytype}{Allows the user to discover which keytypes can be passed in to select or keys and the keytype argument.}
 }
 \value{
-a) will return the same data frame as input with additional column(s) containing the annotation(s). b) will convert input to data rame and add column(s) containing the annotation(s).
+a) will return the same data frame as input with additional column(s) containing the annotation(s). b) will convert input to data frame and add column(s) containing the annotation(s).
 }
 \description{
 Adds gene annotations

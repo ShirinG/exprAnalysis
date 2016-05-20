@@ -5,7 +5,7 @@
 \title{diff_limma_pairwise (from limma functions).}
 \usage{
 diff_limma_pairwise(expmatrix, design, comparison, p.value = log2(0.05),
-  lfc = 1.5, projectfolder = getwd())
+  lfc = log2(1.5), projectfolder = getwd())
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}

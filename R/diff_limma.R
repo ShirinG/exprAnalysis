@@ -16,7 +16,7 @@
 #' groupcomparisons=c("TolLPS-Ctrl", "TollMRP8-Ctrl", "ActLPS-Ctrl")
 #' diff_limma_all(expmatrix, design, groupcomparisons)
 #' @export
-diff_limma_all <- function(expmatrix, design, groupcomparisons, p.value=0.05, lfc=1.5, projectfolder = getwd()){
+diff_limma_all <- function(expmatrix, design, groupcomparisons, p.value=0.05, lfc=log2(1.5), projectfolder = getwd()){
 
   if (!file.exists(file.path(projectfolder, "Diff_limma"))) {dir.create(file.path(projectfolder, "Diff_limma")) }
 

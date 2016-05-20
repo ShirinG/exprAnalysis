@@ -62,7 +62,7 @@ Takes an expression data matrix containing numeric values as expression measures
 - Rownames should be gene or isoform identifiers (e.g. gene names)
 - Colnames should be sample IDs (sample names)
 
-This package contains an example matrix of randomly generated expression data (called **"expmatrix"**).
+This package contains two example matrices of randomly generated expression data as raw read counts (called **"countmatrix"**) and as normalized read counts (called **"expmatrix"**).
 
 ```{r input, include=FALSE}
 #expmatrix <- read.table(system.file("extdata", "Random_exprMatrix.txt", package = "exprAnalysis"), header = TRUE, sep = "\t")
@@ -70,6 +70,7 @@ This package contains an example matrix of randomly generated expression data (c
 ```
 
 ```{r input_data}
+data("countmatrix")
 data("expmatrix")
 ```
 
@@ -89,14 +90,14 @@ If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data 
 
 If you want to do count data analysis, you can either produce a count matrix (e.g. with HTSeq) and proceed to DESeq2 analysis or you can produce the count table directly from the bam files and then proceed to DESeq2. 
 
-read_bam_to_countmatrix() returns a DESeq data frame that can directly be used with the DEseq2 pipeline. Or you can manually load the count matrix that was saved by read_bam_to_countmatrix() and then go to DESeqDataFrameFromMatrix().
+read_bam_to_countmatrix() returns a DESeq data set that can directly be used with the DEseq2 pipeline. Or you can manually load the count matrix that was saved by read_bam_to_countmatrix() and then go to DESeqDataFrameFromMatrix().
+
+In read_bam_to_countmatrix() fragments will be counted only once to each gene, even if they overlap multiple exons of a gene which may themselves be overlapping.
 
 ```{r countdata_bam, eval=FALSE}
 
 # Locate alignment files
-
 dir <- getwd()
-fileslist <- list.files(dir)
 filenames <- fileslist[grep(".*sorted.bam$", list.files(dir))]
 
 # Create a sample table
@@ -111,8 +112,61 @@ sampleTable <- data.frame(row.names = samplename, sampleid = sampleid, filenames
 #Sample1         1  Sample1_accepted_hits.sorted.bam  Treatment
 #Sample2         2  Sample2_accepted_hits.sorted.bam    Control
 
-data <- read_bam_to_countmatrix(sampleTable, gtffile = "/media/data/Public/ENSEMBL.rel.83/Homo_sapiens.GRCh38.83.gtf", projectfolder = getwd(), outPrefix="Test")
+data <- read_bam_to_countmatrix(sampleTable, gtffile = "Homo_sapiens.GRCh38.83.gtf", projectfolder = getwd(), outPrefix="Test")
 
+countmatrix <- SummarizedExperiment::assay(data)
+
+```
+
+<br>
+
+## Continue count data analysis with DESeq2
+
+See DESeq2 Vignette for additional details.
+
+### If you do not directly proceed from read_bam_to_countmatrix():
+
+- read in saved count matrix
+- define experimental design
+- convert to DESeq data set
+
+```{r read_in_countdata, eval=FALSE}
+countmatrix <-   read.table(file.path(projectfolder, "Countdata", outPrefix, paste0(outPrefix, "_Summarize_overlaps_count_matrix.txt")), header=T, sep = "\t")
+```
+
+```{r read_in_countdata2, eval=TRUE}
+design <- gsub("(.*)(_[0-9])", "\\1", colnames(countmatrix))
+ExpDesign <- data.frame(row.names=colnames(countmatrix), treatment = design)
+
+data <- DESeq2::DESeqDataSetFromMatrix(countData = countmatrix, colData=ExpDesign, design=~treatment)
+```
+
+<br>
+
+### DESeq2
+
+- optional, but recommended: remove genes with zero counts over all samples
+- run DESeq
+- Extracting transformed values
+
+Note: the rlog transformation is provided for applications other than differential testing. For differential testing we recommend the DESeq function applied to raw counts, as described later in this workflow, which also takes into account the dependence of the variance of counts on the mean value during the dispersion estimation step.
+
+
+```{r DESeq2, eval=TRUE}
+data <- data[rowSums(DESeq2::counts(data)) > 1, ]
+
+data_DESeq <- DESeq2::DESeq(data)
+
+expmatrix_DESeq <- DESeq2::rlog(data_DESeq, fitType="local")
+expmatrix <- SummarizedExperiment::assay(expmatrix_DESeq)
+```
+
+<br>
+
+#### Dispersion plot
+
+```{r dispersion_plot, eval=TRUE, fig.width=10, fig.height=5}
+DESeq2::plotDispEsts(data_DESeq, main="Dispersion Estimates")
 ```
 
 -----------
@@ -123,9 +177,39 @@ data <- read_bam_to_countmatrix(sampleTable, gtffile = "/media/data/Public/ENSEM
 
 If you have CEL files, start with the following code to produce the expression matrix and then treat it like the **expmatrix** example:
 
-```{r Affymetrix, include=FALSE}
+- Read in the data and create an expression, using RMA for example
+
+Currently the rma function implements RMA in the following manner
+1. Probe specific correction of the PM probes using a model based on observed intensity being the sum of signal and noise
+2. Normalization of corrected PM probes using quantile normalization (Bolstad et al., 2003)
+3. Calculation of Expression measure using median polish.
+
+```{r Affymetrix, eval=FALSE}
+library(affy)
+
+# Choose directory containing CEL files
+dir <- getwd()
+
+# check, that you have the correct directory
+celfiles <- fileslist[grep(".*CEL$", list.files(dir), ignore.case = TRUE)]
+
+affydata <- ReadAffy(celfile.path=dir)
+MAplot(affydata,plot.method="smoothScatter")
+
+eset <- rma(affydata)
+phenoData(eset)
+
+write.exprs(eset, file="eset.txt")
+
+library(made4)
+overview(eset)
+
+# RNA degradation plots
+deg <- AffyRNAdeg(affydata)
+plotAffyRNAdeg(deg)
 
 
+expmatrix <- exprs(eset)
 ```
 
 -----------
@@ -154,6 +238,11 @@ If you have Illumina intensity data, load it into GenomeStudio first:
 
 # Batch correction
 
+```{r batch_cor, eval=FALSE}
+pheno <- data.frame(sample=c(1:16), treatment=sub("(.*)(_[0-9])", "\\1", colnames(expmatrix)), batch=ifelse(grepl("Ctrl", colnames(expmatrix)) == TRUE, "1", ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")), row.names = colnames(expmatrix))
+
+expmatrix <- batch_removal(expmatrix, pheno)
+```
 
 -----------
 
@@ -165,8 +254,23 @@ If you have Illumina intensity data, load it into GenomeStudio first:
 
 Plots variance against mean gene expression across samples and calculates the correlation of a linear regression model.
 
-```{r var_vs_mean, fig.width=5, fig.height=5}
+```{r var_vs_mean, fig.width=6, fig.height=5}
+var_vs_mean(countmatrix)
 var_vs_mean(expmatrix)
+```
+
+-----------
+
+<br>
+
+## Intersample variances
+
+```{r variance_sumOverlaps, eval=TRUE, fig.width= 5}
+Ctrl_cor <- expmatrix[,grep("Ctrl", colnames(expmatrix))]
+
+corrgram::corrgram(Ctrl_cor, order=TRUE, lower.panel=panel.pie,
+         upper.panel=panel.pts, text.panel=panel.txt,
+         main="Correlogram of controls")
 ```
 
 -----------
@@ -185,7 +289,9 @@ groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep
 pca_plot(expmatrix, groups)
 ```
 
-or you can plot the principle components and calculate TF and GO term enrichments of genes (defaults to top 2.5%) with highest and lowest loadings. With this function, the ouput files are directly saved to .pdf and .txt (by default to working directory).
+<br>
+
+Or you can plot the principle components and calculate TF and GO term enrichments of genes (defaults to top 2.5%) with highest and lowest loadings. With this function, the ouput files are directly saved to .pdf and .txt (by default to working directory).
 
 ```{r pca_plot_enrich, eval=FALSE}
 pca_plot_enrich(expmatrix, groups)
@@ -211,8 +317,30 @@ wgcna_sample_dendrogram(expmatrix, datTraits)
 
 ## Heatmaps
 
+Here, of the 30 most highly expressed genes.
+
 ```{r heatmaps, eval=TRUE}
-heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
+
+select <- order(rowMeans(expmatrix),decreasing=TRUE)[1:30]
+
+heatmaps(expmatrix[select,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
+
+
+# Heatmap function from DESeq2:
+
+sampleDists <- dist(t(expmatrix))
+sampleDistMatrix <- as.matrix(sampleDists)
+rownames(sampleDistMatrix) <- paste(expmatrix_DESeq$treatment)
+colnames(sampleDistMatrix) <- NULL
+colors <- grDevices::colorRampPalette( rev(RColorBrewer::brewer.pal(9, "Blues")) )(255)
+pheatmap::pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+
+df <- data.frame(treatment = SummarizedExperiment::colData(data_DESeq)[,c("treatment")], row.names = rownames(SummarizedExperiment::colData(data_DESeq)))
+pheatmap::pheatmap(expmatrix[select,], cluster_rows=TRUE, show_rownames=TRUE, cluster_cols=TRUE, annotation_col=df)
+
 ```
 
 -----------
@@ -241,9 +369,9 @@ groupcomparisons=c("TolLPS-Ctrl", "TollMRP8-Ctrl", "ActLPS-Ctrl")
 DEgenes_all <- diff_limma_all(expmatrix, design, groupcomparisons)
 
 comparison="TolLPS-Ctrl"
-DEgenes_pw <- diff_limma_pairwise(expmatrix, design, comparison)
-
 Allgenes_limma_pw <- diff_limma_pw_unfiltered(expmatrix, design, comparison)
+
+DEgenes_pw <- Allgenes_limma_pw[which(abs(Allgenes_limma_pw$logFC) > log2(1.5) & Allgenes_limma_pw$adj.P.Val < 0.05),]
 ```
 
 Example output files from diff_limma functions have been saved to the package data and can be accessed via:
@@ -261,6 +389,79 @@ data("Allgenes_limma_pw")
 
 For raw read count data.
 
+##### contrast DE groups:
+ + lfc = treatment > Ctrl, - lfc = treatment < Ctrl
+ p-value & p.adjust values of NA indicate outliers detected by Cook's distance
+ NA only for p.adjust means the gene is filtered by automatic independent filtering for having a low mean normalized count
+
+<br>
+
+```{r DEgenes_DESeq2, eval=TRUE, warning=FALSE}
+# find possible contrasts with
+# DESeq2::resultsNames(data_DESeq)
+
+res <- DESeq2::results(data_DESeq, contrast=list("treatmentActLPS", "treatmentCtrl"), cooksCutoff = 0.99, independentFiltering = TRUE, alpha = 0.05, pAdjustMethod = "BH")
+
+# order results table by the smallest adjusted p value:
+res <- res[order(res$padj),]
+
+results = as.data.frame(dplyr::mutate(as.data.frame(res), sig=ifelse(res$padj<0.05, "FDR<0.05", "Not Sig")), row.names=rownames(res))
+
+DEgenes_DESeq <- results[which(abs(results$log2FoldChange) > log2(1.5) & results$padj < 0.05),]
+
+p = ggplot2::ggplot(results, aes(log2FoldChange, -log10(pvalue))) +
+  ggplot2::geom_point(aes(col=sig)) +
+  ggplot2::scale_color_manual(values=c("red", "black")) +
+  ggplot2::ggtitle("Volcano Plot of DESeq2 analysis")
+
+p+ggrepel::geom_text_repel(data=results[1:10, ], aes(label=rownames(results[1:10, ])))
+
+# If there aren't too many DE genes:
+#p+geom_text_repel(data=dplyr::filter(results, padj<0.05), aes(label=rownames(results[1:10, ])))
+
+```
+
+```{r volcano_simple, eval=FALSE, include=FALSE, warning=FALSE}
+
+# Make a basic volcano plot
+plot(res[,2], -log10(res[,6]), main = "Volcano plot", xlab="l2fc", ylab="-log10(q-val)", pch = 20, col=scales::alpha("black", 0.5))
+
+# Add colored points: green if padj<0.05, orange of log2FC>1, red if both)
+points(res[which(res$padj<.0001),2], -log10(res[which(res$padj<.0001),6]), pch=16, col=scales::alpha("green", 0.5))
+points(res[which(abs(res$log2FoldChange)>2),2], -log10(res[which(abs(res$log2FoldChange)>2),6]), pch=16, col=scales::alpha("orange", 0.5))
+points(res[which(abs(res$log2FoldChange)>2 & res$padj<.0001),2], -log10(res[which(abs(res$log2FoldChange)>2 & res$padj<.0001),6]), pch=16, col=scales::alpha("red", 0.5))
+
+abline(h=-log10(.0001), lty=2, lwd=2)
+abline(v=2, lty=3, lwd=2)
+abline(v=-2, lty=3, lwd=2)
+
+calibrate::textxy(res[1:10,2], -log10(res[1:10,6]), labs=rownames(res[1:10,]), pos=3)
+```
+
+<br>
+
+#### MA-plot
+
+```{r ma_plot, echo=TRUE, fig.width=5, fig.height=5}
+DESeq2::plotMA(res, main="MA Plot", ylim=c(-2,2))
+```
+
+<br>
+
+#### plotCounts, which normalizes counts by sequencing depth and adds a pseudocount of 1/2 to allow for log scale plotting
+
+```{r plot_counts, echo=TRUE, fig.width=10, fig.height=3}
+
+par(mfrow=c(1,3))
+
+for (i in 1:3){
+  gene <- rownames(res)[i]
+  main = gene
+  DESeq2::plotCounts(data_DESeq, gene=gene, intgroup="treatment", main = main)
+}
+
+```
+
 -----------
 
 <br>
@@ -269,8 +470,10 @@ For raw read count data.
 
 Can be used to add e.g. ENTREZ ID, ENSEMBL ID, etc. to gene name.
 
-```{r geneAnnotations, eval=FALSE}
-geneAnnotations(input=DEgenes_pw, keys=row.names(DEgenes_pw), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+```{r geneAnnotations, eval=TRUE, message=FALSE, warning=FALSE}
+DEgenes_pw <- geneAnnotations(input=DEgenes_pw, keys=row.names(DEgenes_pw[1:5,]), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+DEgenes_DESeq <- geneAnnotations(input=DEgenes_DESeq, keys=row.names(res[1:5,]), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+
 ```
 
 -----------
@@ -279,19 +482,15 @@ geneAnnotations(input=DEgenes_pw, keys=row.names(DEgenes_pw), column=c("ENTREZID
 
 ## Enrichment Analysis using clusterPofiler
 
-```{r clusterProfiler, eval=FALSE}
+```{r clusterProfiler, eval=TRUE, warning=FALSE, message=FALSE}
+geneList <- as.vector(Allgenes_limma_pw$logFC)
+names(geneList) <- rownames(Allgenes_limma_pw)
+gene <- na.omit(DEgenes_pw$ENTREZID)
 
-x <- rownames(DEgenes_pw)[1:500]
-eg = clusterProfiler::bitr(x, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
 
-geneList <- merge(eg, DEgenes_pw[1:500,"logFC", drop = FALSE], by.x = "SYMBOL", by.y = "row.names", all = TRUE)
-gene <- geneList$ENTREZID
-
-#gene <- geneList$ENTREZID[abs(geneList$logFC) > 2]
-
-## Group GO
+# Group GO
 ggo <- clusterProfiler::groupGO(gene     = gene,
-                                OrgDb    = org.Hs.eg.db,
+                                OrgDb    = org.Hs.eg.db::org.Hs.eg.db,
                                 ont      = "BP",
                                 level    = 3,
                                 readable = TRUE)
@@ -300,31 +499,30 @@ barplot(ggo, drop=TRUE, showCategory=12)
 
 # GO over-representation test
 ego <- clusterProfiler::enrichGO(gene          = gene,
-                                 #universe      = names(geneList),
-                                 OrgDb         = org.Hs.eg.db,
+                                 OrgDb         = org.Hs.eg.db::org.Hs.eg.db,
                                  ont           = "BP",
                                  pAdjustMethod = "BH",
-                                 pvalueCutoff  = 0.01,
+                                 pvalueCutoff  = 0.05,
                                  qvalueCutoff  = 0.05, 
                                  readable      = TRUE)
 head(summary(ego))
-barplot(ego, showCategory=8)
-dotplot(ego)
+barplot(ego, showCategory=25)
+clusterProfiler::dotplot(ego, showCategory=25)
 enrichMap(ego)
-#cnetplot(ego, categorySize="pvalue", foldChange=geneList)
-plotGOgraph(ego)
+cnetplot(ego, categorySize="pvalue", foldChange=geneList)
+clusterProfiler::plotGOgraph(ego)
 
 # enrichGO test the whole GO corpus and enriched result may contains very general terms. With dropGO function, user can remove specific GO terms or GO level from results obtained from both enrichGO and compareCluster.
 
 
 ## KEGG over-representation test
-kk <- enrichKEGG(gene         = gene,
+kk <- clusterProfiler::enrichKEGG(gene         = gene,
                  organism     = 'hsa',
                  pvalueCutoff = 0.05)
 head(summary(kk))
 barplot(kk, showCategory=8)
-dotplot(kk)
-#cnetplot(kk, categorySize="geneNum", foldChange=geneList)
+clusterProfiler::dotplot(kk)
+cnetplot(kk, categorySize="geneNum", foldChange=geneList)
 
 ```
 
@@ -338,7 +536,7 @@ dotplot(kk)
 For Toll-like-receptor signaling:
 
 ```{r pathview, eval=FALSE}
-pathview_func(DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
+pathview_func(DEgenes_pw, logFCcolumn="logFC", pathway.id = "04620", out.suffix = "DE_TolLPS")
 ```
 
 -----------
@@ -351,7 +549,7 @@ With **"gplots"** (installed by package).
 
 Example:
 
-```{r venn, eval=TRUE}
+```{r venn, eval=TRUE, fig.width=5, fig.height=5}
 venn_list <- list(genelist1 = na.omit(rownames(DEgenes_pw)[1:50]), genelist2 = na.omit(rownames(DEgenes_pw)[30:80]), genelist3 = na.omit(rownames(DEgenes_pw)[48:100]))
 
 gplots::venn(venn_list, show.plot=TRUE, small=0.7, showSetLogicLabel=FALSE, simplify = TRUE)
@@ -360,7 +558,7 @@ mtext("If you want a header, put it here", side=3, cex = 0.8)
 ```
 
 ```{r compareCluster, eval=FALSE}
-## Biological theme comparison
+# Biological theme comparison
 compGO <- clusterProfiler::compareCluster(geneCluster   = venn_list,
                                           fun           = "enrichGO",
                                           ont           = "BP",
@@ -421,7 +619,9 @@ For example, go to Style and
 TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 ```
 
+<div style="width:1000px; height=800px">
 ![TF network Pearson 0.7](CopyOfnetwork_test.png)
+</div>
 
 -----------
 

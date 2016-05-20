@@ -35,6 +35,8 @@ Reads in bam files and creates a count matrix based on a gtf file.
 So far, it is only implemented for obtaining read counts for genes based on summarized counts of reads overlapping all exons of each gene.
 }
 \examples{
-read_bam_to_countmatrix(sampleTable, gtffile = "/media/data/Public/ENSEMBL.rel.83/Homo_sapiens.GRCh38.83.gtf", projectfolder = getwd(), outPrefix="Test")
+read_bam_to_countmatrix(sampleTable,
+                        gtffile = "Homo_sapiens.GRCh38.83.gtf",
+                        projectfolder = getwd(), outPrefix="Test")
 }
 

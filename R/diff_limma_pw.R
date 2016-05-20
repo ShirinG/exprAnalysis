@@ -16,7 +16,7 @@
 #' comparison="TolLPS-Ctrl"
 #' diff_limma_pairwise(expmatrix, design, comparison)
 #' @export
-diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=log2(0.05), lfc=1.5, projectfolder = getwd()){
+diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=log2(0.05), lfc=log2(1.5), projectfolder = getwd()){
 
   if (!file.exists(file.path(projectfolder, "Diff_limma"))) {dir.create(file.path(projectfolder, "Diff_limma")) }
 

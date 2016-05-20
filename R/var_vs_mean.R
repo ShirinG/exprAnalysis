@@ -8,11 +8,16 @@
 #' var_vs_mean(expmatrix)
 #' @export
 var_vs_mean <- function(expmatrix){
-  ####plotting variance against mean
-  means <- rowMeans(as.matrix(expmatrix))
-  vars <- matrixStats::rowVars(as.matrix(expmatrix))
 
-  plot(log2(vars+1)~log2(means+1), xlab="Mean gene expression (log2+1)", ylab="Mean variance of gene expression (log2+1)", main="Means vs. variance of gene expression\nacross samples", pch=16, col=scales::alpha("black", alpha = 0.1))
-  abline(lm(log2(vars+1)~log2(means+1)), lwd=2, col="red")
-  print(cor.test(means, vars))
+  dispersion <- data.frame()
+
+  for (i in 1: nrow(expmatrix)){
+    dispersion[i,1] <- rowMeans(as.matrix(expmatrix)[i, , drop=FALSE])
+    dispersion[i,2] <- matrixStats::rowVars(as.matrix(expmatrix)[i, , drop=FALSE])
+  }
+
+  plot(log2(dispersion[,1]+1), log2(dispersion[,2]+1),pch=16, xlab="Mean gene expression (log2+1)", ylab="Mean variance of gene expression (log2+1)", main="Means vs. variance of gene expression\nacross samples", col=grDevices::rgb(0,100,0,50,maxColorValue=255))
+  abline(0, 1)
+  abline(lm(log2(dispersion[,2]+1)~log2(dispersion[,1]+1)), lwd=2, col="red")
+  print(cor.test(log2(dispersion[,1]+1), log2(dispersion[,2]+1)))
 }
