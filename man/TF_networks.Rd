@@ -5,7 +5,7 @@
 \title{TF_networks.}
 \usage{
 TF_networks(expmatrix, nodeAnno, GeneName = "row.names",
-  projectfolder = getwd(), outPrefix)
+  projectfolder = getwd(), outPrefix = "")
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}

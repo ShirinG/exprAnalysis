@@ -37,7 +37,15 @@ options(stringsAsFactors = FALSE)
 
 ```
 
-```{r library_officical, eval=FALSE}
+```{r library_official, eval=FALSE}
+# update all packages
+source.bioc="https://bioconductor.org/biocLite.R"
+source(source.bioc)
+biocLite("BiocUpgrade")
+biocLite(ask=FALSE) 
+
+update.packages()
+
 # make sure the workspace is in pristine condition
 rm(list=ls(all=TRUE))
 
@@ -127,11 +135,11 @@ countmatrix <- SummarizedExperiment::assay(data)
 
 <br>
 
-## Continue count data analysis with DESeq2
+### Continue count data analysis with DESeq2
 
 See DESeq2 Vignette for additional details.
 
-### If you do not directly proceed from read_bam_to_countmatrix():
+#### If you do not directly proceed from read_bam_to_countmatrix():
 
 - read in saved count matrix
 - define experimental design
@@ -237,7 +245,7 @@ If you have Illumina intensity data, load it into GenomeStudio first:
 - Export SampleProbeProfile.txt: Choose columns AVG_Signal, Detection Pval, BEAD_STDERR and Avg_NBEADS
 - Export ControlProbeProfile.txt: Choose columns AVG_Signal and Detection Pval
 - You also need the Samplesheet.csv
-- Follow Frank's Pipeline until you obtain **BSDlog2norm**. From here on, you could treat it like the **expmatrix** example.
+- Follow Frank's Pipeline until you obtain **BSDlog2norm**. From here on, you can treat it like the **expmatrix** example.
 
 -----------
 
@@ -291,7 +299,7 @@ Uses functions as implemented by **"pcaGoPromoter"**.
 You can only plot the principle components using:
 
 ```{r pca_plot, eval=TRUE, fig.width=6, fig.height=6}
-groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
+groups <- as.factor(c(rep("Ctrl",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
 
 pca_plot(expmatrix, groups)
 ```
@@ -392,8 +400,9 @@ dev.off()
 softpower = 30
 mergingThresh = 0.25
 net = blockwiseModules(datExpr,checkMissingData = TRUE,corType="bicor", # or pearson
-                       maxBlockSize=10000,networkType="signed",power=softpower,minModuleSize=30,maxPOutliers = 0.1,
-                       mergeCutHeight=mergingThresh,numericLabels=TRUE,saveTOMs=TRUE,randomSeed = 12345,
+                       maxBlockSize=10000,networkType="signed",power=softpower,
+                       minModuleSize=30,maxPOutliers = 0.1,mergeCutHeight=mergingThresh,
+                       numericLabels=TRUE,saveTOMs=TRUE,randomSeed = 12345,
                        pamRespectsDendro=FALSE,saveTOMFileBase="TESTexprsTOM")
 str(net)
 ```
@@ -423,10 +432,7 @@ wgcna_heatmaps(MEs, datExpr, datTraits)
 
 ![Module trait correlation heatmap](wgcnaHeatmap.png)
 
-
-```{r wgcna_wgcna_heatmaps, eval=TRUE}
-data(MEs)
-```
+<br>
 
 ### Output file for gene ontology analysis
 
@@ -445,9 +451,30 @@ dataOutput=data.frame(datExpr_anno ,moduleColors, datKME, traitsCor)
 write.table(dataOutput,"AllGenesResults.txt",row.names=F,sep="\t")
 ```
 
-```{r wgcna_dataoutput, eval=TRUE}
+<br>
+
+### Module eigengene expression plots
+
+```{r module_eigengene_plot, eval=TRUE, fig.width=10, fig.height=15}
+data(MEs)
 data(dataOutput)
+
+
+layout(matrix(c(1:length(colnames(MEs)),12,rep(13,3)), ncol=3, byrow=TRUE), heights=c(rep(3,4), 0.5))
+
+for (color in gsub("ME", "", colnames(MEs))){
+  module_eigengene_plot(groups, MEs, color)
+}
+plot.new()
+
+par(mai=c(0,0,0,0))
+plot.new()
+legend("bottom", c("mean module eigengenes", "replicate module eigengene values"), xpd = TRUE, horiz = TRUE, inset = c(0,0), bty = "n", col = c("grey", "black"), pch = 16, cex = 2)
+
 ```
+
+
+
 
 -----------
 
@@ -496,7 +523,7 @@ For raw read count data.
 
 ```{r DEgenes_DESeq2, eval=TRUE, warning=FALSE}
 # find possible contrasts with
-# DESeq2::resultsNames(data_DESeq)
+DESeq2::resultsNames(data_DESeq)
 
 res <- DESeq2::results(data_DESeq, contrast=list("treatmentActLPS", "treatmentCtrl"), cooksCutoff = 0.99, independentFiltering = TRUE, alpha = 0.05, pAdjustMethod = "BH")
 
@@ -606,7 +633,7 @@ ego <- clusterProfiler::enrichGO(gene          = gene,
 head(summary(ego))
 barplot(ego, showCategory=25)
 clusterProfiler::dotplot(ego, showCategory=25)
-enrichMap(ego)
+#enrichMap(ego)
 cnetplot(ego, categorySize="pvalue", foldChange=geneList)
 clusterProfiler::plotGOgraph(ego)
 
@@ -748,6 +775,33 @@ TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 <br>
 
 # Other functions
+
+## miRNA target identification
+
+```{r multiMiR, eval=FALSE}
+# The current version of multiMiR is 1.0.1 and can be downloaded from
+http://multimir.ucdenver.edu/multiMiR_1.0.1.tar.gz.
+
+install.packages("XML")
+install.packages("RCurl")
+install.packages("/pathname/multiMiR_1.0.1.tar.gz", repos=NULL, type="source")
+
+library(multiMiR)
+
+miRNA_list <- as.character(c("hsa-miR-146b-3p", "hsa-miR-155-5p", "hsa-miR-4521"))
+
+miRNA_allTargets = get.multimir(org="hsa", mirna=miRNA_list, target=NULL, table="all", summary=TRUE, predicted.cutoff.type="p", predicted.cutoff=NULL)
+str(miRNA_allTargets)
+    
+write.table(miRNA_allTargets$predicted, "miRNAs_allTargets_predictedTargets.txt", row.names = F, col.names = T, sep="\t")
+write.table(miRNA_allTargets$validated, "miRNAs_allTargets_validatedTargets.txt", row.names = F, col.names = T, sep="\t")
+write.table(miRNA_allTargets$disease.drug, "miRNAs_allTargets_diseaseDrugTargets.txt", row.names = F, col.names = T, sep="\t")
+write.table(miRNA_allTargets$summary, "miRNAs_allTargets_summaryTargets.txt", row.names = F, col.names = T, sep="\t")
+```
+
+-----------
+
+<br>
 
 ## Hypergeometric test for enrichment
 

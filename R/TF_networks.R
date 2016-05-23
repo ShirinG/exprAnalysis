@@ -16,7 +16,7 @@
 #' @examples
 #' TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw, outPrefix="Test")
 #' @export
-TF_networks <- function(expmatrix, nodeAnno, GeneName = "row.names", projectfolder = getwd(), outPrefix){
+TF_networks <- function(expmatrix, nodeAnno, GeneName = "row.names", projectfolder = getwd(), outPrefix=""){
 
   if (!file.exists(file.path(projectfolder, "Networks"))) {dir.create(file.path(projectfolder, "Networks")) }
 
