@@ -13,6 +13,17 @@
 #' @export
 geneAnnotations <- function(input, keys, column, keytype){
 
+  if (!requireNamespace("AnnotationDbi", quietly = TRUE)) {
+    stop("AnnotationDbi needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("org.Hs.eg.db", quietly = TRUE)) {
+    stop("org.Hs.eg.db needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+
   if (is.data.frame(input)){
 
     for (i in 1:length(column)){

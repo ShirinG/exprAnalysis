@@ -12,6 +12,12 @@
 #' heatmaps(expmatrix[1:100,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
 #' @export
 heatmaps <- function(expmatrix, method_dist = "canberra", method_hclust = "ward.D2", samplecols, main = "Heatmap of genes"){
+
+  if (!requireNamespace("gplots", quietly = TRUE)) {
+    stop("gplots needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   # transpose the matrix and cluster columns
   hc.cols <- stats::hclust(dist(t(as.matrix(expmatrix)), method = method_dist), method = method_hclust)
 

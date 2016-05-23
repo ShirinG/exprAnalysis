@@ -8,7 +8,7 @@
 #' @param expmatrix An input matrix with gene names as row names and sample names as column names.
 #' @param thresholdZ.k Connectivity threshold. If scaled connectibity of a sample is below this value, it is marked as an outlier. Defaults to -2.5 but can also be changed to e.g. -5.
 #' @param datTraits Numeric matrix of phenotypes belonging to each sample in columns of matrix.
-#' @return A sample dendrogram plot with sample heatmap.
+#' @return Shows a sample dendrogram plot with sample heatmap and returns the object datExpr, which is the transformed expmatrix input and can be used for the next steps in the WGCNA pipeline.
 #' @examples
 #' datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
@@ -26,6 +26,13 @@ wgcna_sample_dendrogram <- function(expmatrix, datTraits, thresholdZ.k=-2.5){
     stop("flashClust needed for this function to work. Please install it.",
          call. = FALSE)
   }
+
+
+  # transpose the expression data to have rows for samples and columns for genes
+  datExpr=t(expmatrix)
+
+  # show that row names agree
+  if(!table(rownames(datTraits)==rownames(datExpr))) stop("Rownames of expmatrix and datTraits don't match")
 
   #adjacency matrix
   A=WGCNA::adjacency(expmatrix,type="distance")
@@ -64,6 +71,8 @@ wgcna_sample_dendrogram <- function(expmatrix, datTraits, thresholdZ.k=-2.5){
   } else {
     dynamicTreeCut::printFlush("All samples are okay!")
   }
+
+  return(datExpr)
 
 }
 

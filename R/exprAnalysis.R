@@ -4,8 +4,8 @@
 #' @section exprAnalysis functions:
 #' The exprAnalysis functions ...
 #' @importFrom grDevices dev.off pdf rgb
-#' @importFrom graphics abline plot
-#' @importFrom stats as.dendrogram as.dist cor.test dist hclust lm model.matrix
+#' @importFrom graphics abline plot par
+#' @importFrom stats as.dendrogram as.dist cor.test dist hclust lm model.matrix na.omit
 #' @importFrom utils write.table data
 #' @importFrom org.Hs.eg.db org.Hs.eg.db
 #' @importFrom devtools load_all

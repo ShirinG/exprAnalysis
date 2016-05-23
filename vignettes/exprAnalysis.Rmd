@@ -31,11 +31,18 @@ The package can be installed via github:
 ```{r library_private, echo=FALSE, include=FALSE, cache=FALSE}
 #require(devtools)
 devtools::load_all()
+
+options(stringsAsFactors = FALSE)
+#WGCNA::enableWGCNAThreads()
+
 ```
 
 ```{r library_officical, eval=FALSE}
 # make sure the workspace is in pristine condition
 rm(list=ls(all=TRUE))
+
+options(stringsAsFactors = FALSE)
+enableWGCNAThreads()
 
 # install package from github
 devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
@@ -268,8 +275,8 @@ var_vs_mean(expmatrix)
 ```{r variance_sumOverlaps, eval=TRUE, fig.width= 5}
 Ctrl_cor <- expmatrix[,grep("Ctrl", colnames(expmatrix))]
 
-corrgram::corrgram(Ctrl_cor, order=TRUE, lower.panel=panel.pie,
-         upper.panel=panel.pts, text.panel=panel.txt,
+corrgram::corrgram(Ctrl_cor, order=TRUE, lower.panel=corrgram::panel.pie,
+         upper.panel=corrgram::panel.pts, text.panel=corrgram::panel.txt,
          main="Correlogram of controls")
 ```
 
@@ -295,20 +302,6 @@ Or you can plot the principle components and calculate TF and GO term enrichment
 
 ```{r pca_plot_enrich, eval=FALSE}
 pca_plot_enrich(expmatrix, groups)
-```
-
------------
-
-<br>
-
-## Hierarchical Clustering and outlier detection
-
-Uses adjacency matrix function from **"WGCNA"** and hierarchical clustering from **"flashClust"**.
-
-```{r wgcna_sample_dendrogram, eval=TRUE, fig.width=8, fig.height=5}
-datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolPS = c(rep(0, 4), rep(1, 4), rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12), rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), row.names = colnames(expmatrix))
-
-wgcna_sample_dendrogram(expmatrix, datTraits)
 ```
 
 -----------
@@ -349,7 +342,112 @@ pheatmap::pheatmap(expmatrix[select,], cluster_rows=TRUE, show_rownames=TRUE, cl
 
 ## WGCNA
 
+<br>
 
+### Hierarchical Clustering and outlier detection
+
+Uses adjacency matrix function from **"WGCNA"** and hierarchical clustering from **"flashClust"**.
+
+```{r wgcna_sample_dendrogram, eval=TRUE, fig.width=8, fig.height=5}
+datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolPS = c(rep(0, 4), rep(1, 4),rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), ExPhenotype = c(stats::rnorm(4, 10, 1),stats::rnorm(8, 25, 1),stats::rnorm(4, 50, 1)), row.names = colnames(expmatrix))
+
+datExpr <- wgcna_sample_dendrogram(expmatrix, datTraits)
+```
+
+<br>
+
+### Choosing a Soft Threshold
+
+Ideally, pick a SFT with R^2 > 0.9. In this example, this threshold was not reached, so I pick the highest SFT: 30.
+
+```{r wgcna_sft, eval=FALSE}
+# Choose a set of soft thresholding powers
+powers=c(1:30)
+
+# choose power based on SFT criterion
+sft = pickSoftThreshold(datExpr, powerVector = powers, verbose = 5, networkType ="signed", corFnc= "bicor", corOptions=list(maxPOutliers=0.1))
+
+# Plot the results:
+tiff(filename= "SFT.tiff", width = 8000 , height = 4000, res=600, compression = "lzw")
+par(mfrow=c(1,2))
+# SFT index as a function of different powers
+plot(sft$fitIndices[,1],-sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+     xlab="Soft Threshold (power)",ylab="SFT, signed R^2",type="n",main=paste("Scale independence"))
+text(sft$fitIndices[,1],-sign(sft$fitIndices[,3])*sft$fitIndices[,2],
+     labels=powers,col="red")
+# this line corresponds to using an R^2 cut-off of h
+abline(h=0.90,col="red")
+# Mean connectivity as a function of different powers
+plot(sft$fitIndices[,1],sft$fitIndices[,5],type="n",
+     xlab="Soft Threshold (power)",ylab="Mean Connectivity",main=paste("Mean connectivity"))
+text(sft$fitIndices[,1],sft$fitIndices[,5],labels=powers,col="red")
+dev.off()
+```
+
+<br>
+
+### Automatic module detection via dynamic tree cutting
+
+```{r wgcna_net, eval=FALSE}
+softpower = 30
+mergingThresh = 0.25
+net = blockwiseModules(datExpr,checkMissingData = TRUE,corType="bicor", # or pearson
+                       maxBlockSize=10000,networkType="signed",power=softpower,minModuleSize=30,maxPOutliers = 0.1,
+                       mergeCutHeight=mergingThresh,numericLabels=TRUE,saveTOMs=TRUE,randomSeed = 12345,
+                       pamRespectsDendro=FALSE,saveTOMFileBase="TESTexprsTOM")
+str(net)
+```
+
+```{r wgcna_moduleColors, eval=FALSE}
+moduleColors <- wgcna_plotDendroAndColors(datExpr, datTraits, net)
+```
+
+<div style="width:800px; height=800px">
+![Module Dendrogram Plot](ModuleDendrogram_Block_1_of_1.png)
+</div>
+
+<br>
+
+```{r wgcna_MEs, eval=FALSE}
+# Recalculate MEs with color labels
+MEs0 = moduleEigengenes(datExpr, moduleColors, softPower = softpower)$eigengenes
+# Reorder given (eigen-)vectors such that similar ones (as measured by correlation) are next to each other:
+MEs = orderMEs(MEs0)
+rownames(MEs) <- rownames(datExpr)
+write.table(MEs, "Automatic_ModuleEigengenes_numberLabel.txt", row.names=T, quote=F, sep="\t")
+
+datKME <- wgcna_modulememberships(datExpr, MEs, moduleColors)
+
+wgcna_heatmaps(MEs, datExpr, datTraits)
+```
+
+![Module trait correlation heatmap](wgcnaHeatmap.png)
+
+
+```{r wgcna_wgcna_heatmaps, eval=TRUE}
+data(MEs)
+```
+
+### Output file for gene ontology analysis
+
+```{r wgcna_output, eval=FALSE}
+
+# Annotate
+genes = colnames(datExpr)
+datExpr_anno <- geneAnnotations(input=genes, keys=genes, column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+
+# Correlations of genes and traits
+traitsCor=cor(datExpr,datTraits,use="p")
+colnames(traitsCor)=paste("cor",colnames(traitsCor),sep=".")
+
+dataOutput=data.frame(datExpr_anno ,moduleColors, datKME, traitsCor)
+
+write.table(dataOutput,"AllGenesResults.txt",row.names=F,sep="\t")
+```
+
+```{r wgcna_dataoutput, eval=TRUE}
+data(dataOutput)
+```
 
 -----------
 
@@ -409,12 +507,12 @@ results = as.data.frame(dplyr::mutate(as.data.frame(res), sig=ifelse(res$padj<0.
 
 DEgenes_DESeq <- results[which(abs(results$log2FoldChange) > log2(1.5) & results$padj < 0.05),]
 
-p = ggplot2::ggplot(results, aes(log2FoldChange, -log10(pvalue))) +
-  ggplot2::geom_point(aes(col=sig)) +
+p = ggplot2::ggplot(results, ggplot2::aes(log2FoldChange, -log10(pvalue))) +
+  ggplot2::geom_point(ggplot2::aes(col=sig)) +
   ggplot2::scale_color_manual(values=c("red", "black")) +
   ggplot2::ggtitle("Volcano Plot of DESeq2 analysis")
 
-p+ggrepel::geom_text_repel(data=results[1:10, ], aes(label=rownames(results[1:10, ])))
+p+ggrepel::geom_text_repel(data=results[1:10, ], ggplot2::aes(label=rownames(results[1:10, ])))
 
 # If there aren't too many DE genes:
 #p+geom_text_repel(data=dplyr::filter(results, padj<0.05), aes(label=rownames(results[1:10, ])))
@@ -619,7 +717,7 @@ For example, go to Style and
 TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 ```
 
-<div style="width:1000px; height=800px">
+<div style="width:800px; height=800px">
 ![TF network Pearson 0.7](CopyOfnetwork_test.png)
 </div>
 

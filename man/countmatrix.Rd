@@ -10,10 +10,10 @@
   \item{Ctrl_1}{Treatment Ctrl replicate 2}
   \item{Ctrl_2}{Treatment Ctrl replicate 3}
   \item{Ctrl_3}{Treatment Ctrl replicate 4}
-  \item{TollLPS_0}{Treatment TolLPS replicate 1}
-  \item{TollLPS_1}{Treatment TolLPS replicate 2}
-  \item{TollLPS_2}{Treatment TolLPS replicate 3}
-  \item{TollLPS_3}{Treatment TolLPS replicate 4}
+  \item{TolLPS_0}{Treatment TolLPS replicate 1}
+  \item{TolLPS_1}{Treatment TolLPS replicate 2}
+  \item{TolLPS_2}{Treatment TolLPS replicate 3}
+  \item{TolLPS_3}{Treatment TolLPS replicate 4}
   \item{TolS100A8_0}{Treatment TolMRP8/S100A8 replicate 1}
   \item{TolS100A8_1}{Treatment TolMRP8/S100A8 replicate 2}
   \item{TolS100A8_2}{Treatment TolMRP8/S100A8 replicate 3}

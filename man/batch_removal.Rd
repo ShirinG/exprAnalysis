@@ -23,6 +23,5 @@ pheno <- data.frame(sample=c(1:16), treatment=sub("(.*)(_[0-9])", "\\\\1", colna
                    ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")),
                    row.names = colnames(expmatrix))
 expmatrix <- batch_removal(expmatrix, pheno)
- @export
 }
 

@@ -35,10 +35,10 @@
 #'   \item{Ctrl_1}{Treatment Ctrl replicate 2}
 #'   \item{Ctrl_2}{Treatment Ctrl replicate 3}
 #'   \item{Ctrl_3}{Treatment Ctrl replicate 4}
-#'   \item{TollLPS_0}{Treatment TolLPS replicate 1}
-#'   \item{TollLPS_1}{Treatment TolLPS replicate 2}
-#'   \item{TollLPS_2}{Treatment TolLPS replicate 3}
-#'   \item{TollLPS_3}{Treatment TolLPS replicate 4}
+#'   \item{TolLPS_0}{Treatment TolLPS replicate 1}
+#'   \item{TolLPS_1}{Treatment TolLPS replicate 2}
+#'   \item{TolLPS_2}{Treatment TolLPS replicate 3}
+#'   \item{TolLPS_3}{Treatment TolLPS replicate 4}
 #'   \item{TolS100A8_0}{Treatment TolMRP8/S100A8 replicate 1}
 #'   \item{TolS100A8_1}{Treatment TolMRP8/S100A8 replicate 2}
 #'   \item{TolS100A8_2}{Treatment TolMRP8/S100A8 replicate 3}
@@ -135,3 +135,57 @@
 #' @keywords datasets
 #' @aliases bods
 "korg"
+
+#' Module Eigengenes example data
+#'
+#' A dataset containing module eigengenes example data.
+#'
+#' @format A data frame with 16 rows and 11 variables. Rownames show sample names.
+#' \describe{
+#'   \item{MEblue}{Module eigengenes of blue module}
+#'   \item{MEbrown}{Module eigengenes of brown module}
+#'   \item{MEpink}{TModule eigengenes of pink module}
+#'   \item{MEred}{TModule eigengenes of red module}
+#'   \item{MEgreen}{TModule eigengenes of green module}
+#'   \item{MEmagenta}{TModule eigengenes of magenta module}
+#'   \item{MEblack}{TModule eigengenes of black module}
+#'   \item{MEyellow}{TModule eigengenes of yellow module}
+#'   \item{MEpurple}{TModule eigengenes of purple module}
+#'   \item{MEturquoise}{TModule eigengenes of turquoise module}
+#'   \item{MEgrey}{TModule eigengenes of grey module}
+#' }
+#' @source WGCNA example data run.
+#' @usage data(MEs)
+"MEs"
+
+#' Example data output from WGCNA
+#'
+#' A dataset containing example output from WGCNA analysis.
+#'
+#' @format A data frame with 10000 rows and 21 variables. Rownames show sample names.
+#' \describe{
+#'   \item{input}{Gene name}
+#'   \item{ENTREZID}{ENTREZ ID}
+#'   \item{ENSEMBL}{ENSEMBL ID}
+#'   \item{moduleColors}{Module membership color}
+#'   \item{MM.blue}{Module membership value blue module}
+#'   \item{MM.brown}{Module membership value brown module}
+#'   \item{MM.pink}{Module membership value pink module}
+#'   \item{MM.red}{Module membership value red module}
+#'   \item{MM.green}{Module membership value green module}
+#'   \item{MM.magenta}{Module membership value magenta module}
+#'   \item{MM.black}{Module membership value black module}
+#'   \item{MM.yellow}{Module membership value yellow module}
+#'   \item{MM.purple}{Module membership value purple module}
+#'   \item{MM.turquoise}{Module membership value turquoise module}
+#'   \item{MM.grey}{Module membership value grey module}
+#'   \item{cor.Ctrl}{Correlation with control samples}
+#'   \item{cor.TolLPS}{Correlation with TolLPS samples}
+#'   \item{cor.TolS100A8}{Correlation with TolS100A8 samples}
+#'   \item{cor.ActLPS}{Correlation with ActLPS samples}
+#'   \item{cor.Tol}{Correlation with Tol samples}
+#'   \item{cor.ExPhenotype}{Correlation with ExPhenotype samples}
+#' }
+#' @source WGCNA example data output
+#' @usage data(dataOutput)
+"dataOutput"

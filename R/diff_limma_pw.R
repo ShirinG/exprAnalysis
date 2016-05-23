@@ -18,6 +18,11 @@
 #' @export
 diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=log2(0.05), lfc=log2(1.5), projectfolder = getwd()){
 
+  if (!requireNamespace("limma", quietly = TRUE)) {
+    stop("limma needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   if (!file.exists(file.path(projectfolder, "Diff_limma"))) {dir.create(file.path(projectfolder, "Diff_limma")) }
 
   ##make pair-wise comparisons between the groups

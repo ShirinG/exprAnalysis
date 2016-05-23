@@ -14,7 +14,7 @@ wgcna_sample_dendrogram(expmatrix, datTraits, thresholdZ.k = -2.5)
 \item{thresholdZ.k}{Connectivity threshold. If scaled connectibity of a sample is below this value, it is marked as an outlier. Defaults to -2.5 but can also be changed to e.g. -5.}
 }
 \value{
-A sample dendrogram plot with sample heatmap.
+Shows a sample dendrogram plot with sample heatmap and returns the object datExpr, which is the transformed expmatrix input and can be used for the next steps in the WGCNA pipeline.
 }
 \description{
 This function implements optimal hierarchical clustering based on an adjacency matrix

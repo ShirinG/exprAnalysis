@@ -11,8 +11,13 @@
 #'                    ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")),
 #'                    row.names = colnames(expmatrix))
 #' expmatrix <- batch_removal(expmatrix, pheno)
-#'  @export
+#' @export
 batch_removal <- function(expmatrix, pheno){
+
+  if (!requireNamespace("sva", quietly = TRUE)) {
+    stop("sva needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
 
   batch = pheno$batch
   modcombat = stats::model.matrix(~1, data=pheno)

@@ -9,6 +9,11 @@
 #' @export
 var_vs_mean <- function(expmatrix){
 
+  if (!requireNamespace("matrixStats", quietly = TRUE)) {
+    stop("matrixStats needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   dispersion <- data.frame()
 
   for (i in 1: nrow(expmatrix)){

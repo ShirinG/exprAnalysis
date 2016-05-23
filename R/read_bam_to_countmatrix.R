@@ -22,6 +22,32 @@
 #' @export
 read_bam_to_countmatrix <- function(sampleTable, gtffile, projectfolder = getwd(), outPrefix, singleEnd=FALSE, ignore.strand=TRUE, fragments=TRUE){
 
+  if (!requireNamespace("Rsamtools", quietly = TRUE)) {
+    stop("Rsamtools needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("GenomicFeatures", quietly = TRUE)) {
+    stop("GenomicFeatures needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("BiocParallel", quietly = TRUE)) {
+    stop("BiocParallel needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("GenomicAlignments", quietly = TRUE)) {
+    stop("GenomicAlignments needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("SummarizedExperiment", quietly = TRUE)) {
+    stop("SummarizedExperiment needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+
   filenames <- file.path(dir, paste0(sampleTable$filenames))
 
   if(any(!file.exists(filenames))) stop("Bam file path does not exist, check spelling!")
