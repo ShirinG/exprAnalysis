@@ -2,51 +2,8 @@
 
 language: r
 r:
-  - oldrel
   - release
 r: bioc-release
 sudo: false
 cache: packages
 warnings_are_errors: false
-bioc_required: true
-bioc_packages:
-  - AnnotationDbi
-  - arrayQualityMetrics
-  - beadarray
-  - Biobase
-  - BiocInstaller
-  - BiocParallel
-  - biomaRt
-  - clusterProfiler
-  - DESeq2
-  - DOSE
-  - GenomicAlignments
-  - GenomicFeatures
-  - GO.db
-  - impute
-  - pcaGoPromoter
-  - org.Hs.eg.db
-  - pathview
-  - preprocessCore
-  - Rsamtools
-  - SummarizedExperiment
-  - sva
-r_packages:
-  - WGCNA
-  - corrgram
-  - devtools
-  - dynamicTreeCut
-  - flashClust
-  - ggplot2
-  - ggrepel
-  - gplots
-  - graphics
-  - grDevices
-  - limma
-  - matrixStats
-  - pheatmap
-  - RColorBrewer
-  - roxygen2
-  - scales
-  - stats
-  - utils
