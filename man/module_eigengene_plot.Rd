@@ -20,6 +20,7 @@ Produces module eigengene plots.
 This function implements module eigengene plots from wgcna output.
 }
 \examples{
-module_eigengene_plot(groups, MEs, color)
+groups <- as.factor(c(rep("Ctrl",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
+module_eigengene_plot(groups, MEs, color="red")
 }
 

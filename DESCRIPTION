@@ -9,6 +9,9 @@ Maintainer: Shirin Glander <shirin.glander@wwu.de>
 LazyData: TRUE
 Imports:
     AnnotationDbi,
+    arrayQualityMetrics,
+    beadarray,
+    Biobase,
     BiocParallel,
     biomaRt,
     clusterProfiler,
@@ -22,25 +25,28 @@ Imports:
     GenomicFeatures,
     ggplot2,
     ggrepel,
+    GO.db,
     gplots,
     graphics,
     grDevices,
+    impute,
     pcaGoPromoter,
     limma,
     matrixStats,
     org.Hs.eg.db,
     pathview,
     pheatmap,
+    preprocessCore,
     RColorBrewer,
     Rsamtools,
     scales,
     stats,
     SummarizedExperiment,
     sva,
-    utils,
-    WGCNA
+    utils
 Depends:
-    R (>= 2.10)
+    R (>= 2.10),
+    WGCNA
 Suggests:
     dplyr,
     knitr,

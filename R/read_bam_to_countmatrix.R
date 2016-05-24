@@ -71,7 +71,7 @@ read_bam_to_countmatrix <- function(sampleTable, gtffile, projectfolder = getwd(
                             ignore.strand=ignore.strand,
                             fragments=fragments)
 
-    SummarizedExperiment::colData(se) <- DataFrame(sampleTable)
+    SummarizedExperiment::colData(se) <- data.frame(sampleTable)
 
     data <- DESeq2::DESeqDataSet(se, design = ~colData)
 

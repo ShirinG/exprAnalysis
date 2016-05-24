@@ -49,13 +49,25 @@ update.packages()
 # make sure the workspace is in pristine condition
 rm(list=ls(all=TRUE))
 
+orig_par <- par(no.readonly=T)
+
 options(stringsAsFactors = FALSE)
 enableWGCNAThreads()
+
 
 # install package from github
 devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
 
 library("exprAnalysis")
+
+# Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd.
+
+# To view the vignette if you built it with the package:
+
+vignette("exprAnalysis", package="exprAnalysis")
+vignette("CummeRbund", package="exprAnalysis")
+
+browseVignettes("exprAnalysis")
 ```
 
 -----------
@@ -212,13 +224,16 @@ library(affy)
 dir <- getwd()
 
 # check, that you have the correct directory
-celfiles <- fileslist[grep(".*CEL$", list.files(dir), ignore.case = TRUE)]
+celfiles <- list.files(dir, recursive = TRUE)[grep(".*CEL$", list.files(dir, recursive = TRUE), ignore.case = TRUE)]
 
-affydata <- ReadAffy(celfile.path=dir)
+affydata <- ReadAffy(filenames=celfiles)
 MAplot(affydata,plot.method="smoothScatter")
 
 eset <- rma(affydata)
-phenoData(eset)
+
+quality_control_plots(eset, groupColumn=character(0))
+
+# Optional: Remove bad quality probes/ genes and/ or samples
 
 write.exprs(eset, file="eset.txt")
 
@@ -251,7 +266,29 @@ If you have Illumina intensity data, load it into GenomeStudio first:
 - Export SampleProbeProfile.txt: Choose columns AVG_Signal, Detection Pval, BEAD_STDERR and Avg_NBEADS
 - Export ControlProbeProfile.txt: Choose columns AVG_Signal and Detection Pval
 - You also need the Samplesheet.csv
-- Follow Frank's Pipeline until you obtain **BSDlog2norm**. From here on, you can treat it like the **expmatrix** example.
+
+```{r Illumina, eval=FALSE, include=FALSE}
+dataFile      <- file.path("U:", "exprAnalysis_test/SampleProbeProfile.txt")
+qcFile        <- file.path("U:", "exprAnalysis_test/ControlProbeProfile.txt")
+sampleSheet   <- file.path("U:", "exprAnalysis_test/samplesheet.csv")
+```
+
+```{r Illumina_official, eval=FALSE}
+dataFile      <- file.path("SampleProbeProfile.txt")
+qcFile        <- file.path("ControlProbeProfile.txt")
+sampleSheet   <- file.path("samplesheet.csv")
+expressionchipType <- "HumanHT-12 v4"
+
+eset <- read_Illumina(dataFile, qcFile, sampleSheet, expressionchipType, ProbeID = "PROBE_ID", skip = 0, controlID="ProbeID", qc.skip = 0, method_norm ="none", transform="log2")
+
+quality_control_plots(eset)
+
+# Optional: Remove bad quality probes/ genes and/ or samples
+
+eset <- normalise_eset(eset)
+
+expmatrix <- exprs(eset)
+```
 
 -----------
 
@@ -382,6 +419,8 @@ Uses adjacency matrix function from **"WGCNA"** and hierarchical clustering from
 datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolPS = c(rep(0, 4), rep(1, 4),rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), ExPhenotype = c(stats::rnorm(4, 10, 1),stats::rnorm(8, 25, 1),stats::rnorm(4, 50, 1)), row.names = colnames(expmatrix))
 
 datExpr <- wgcna_sample_dendrogram(expmatrix, datTraits)
+
+# Optional: Remove outlier samples and repeat
 ```
 
 <br>
@@ -432,10 +471,6 @@ str(net)
 ```{r wgcna_moduleColors, eval=FALSE}
 moduleColors <- wgcna_plotDendroAndColors(datExpr, datTraits, net)
 ```
-
-<div style="width:800px; height=800px">
-![Module Dendrogram Plot](ModuleDendrogram_Block_1_of_1.png)
-</div>
 
 <br>
 

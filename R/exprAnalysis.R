@@ -11,6 +11,7 @@
 #' @importFrom devtools load_all
 #' @import pathview
 #' @import corrgram
+#' @import WGCNA
 NULL
 
 #roxygen2::roxygenise()

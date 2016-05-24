@@ -3,3 +3,5 @@
 ^\inst\extdata\*
 ^\R\Create_overdispersed_countmatrix.R$
 ^\.travis\.yml$
+^\vignettes\Thumbs.db$
+^\Thumbs.db$

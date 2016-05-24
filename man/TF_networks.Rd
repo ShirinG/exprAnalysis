@@ -5,7 +5,7 @@
 \title{TF_networks.}
 \usage{
 TF_networks(expmatrix, nodeAnno, GeneName = "row.names",
-  projectfolder = getwd(), outPrefix = "")
+  projectfolder = getwd(), outPrefix = "outPrefix")
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}
@@ -31,6 +31,6 @@ Open the TGF file in Cytoscape: Open network from file. Then got to Advanced Opt
 Then open the node annotation table that was also saved by this function: Open table from file, import data as Node Table Columns. YOu can then customize the look of your network.
 }
 \examples{
-TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw, outPrefix="Test")
+TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 }
 

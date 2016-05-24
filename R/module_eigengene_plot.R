@@ -7,7 +7,8 @@
 #' @param color Module color.
 #' @return Produces module eigengene plots.
 #' @examples
-#' module_eigengene_plot(groups, MEs, color)
+#' groups <- as.factor(c(rep("Ctrl",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
+#' module_eigengene_plot(groups, MEs, color="red")
 #' @export
 module_eigengene_plot <- function(groups, MEs, color){
 

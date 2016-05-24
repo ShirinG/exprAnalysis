@@ -14,9 +14,9 @@
 #' @return A .expression output matrix of gene expression of transkription factors in dataset used as Biolayout3D input.
 #' And based on these TFs, it also produces a .txt with node annotations of e.g. logFC and differential expression (e.g. limma output)
 #' @examples
-#' TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw, outPrefix="Test")
+#' TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 #' @export
-TF_networks <- function(expmatrix, nodeAnno, GeneName = "row.names", projectfolder = getwd(), outPrefix=""){
+TF_networks <- function(expmatrix, nodeAnno, GeneName = "row.names", projectfolder = getwd(), outPrefix="outPrefix"){
 
   if (!file.exists(file.path(projectfolder, "Networks"))) {dir.create(file.path(projectfolder, "Networks")) }
 

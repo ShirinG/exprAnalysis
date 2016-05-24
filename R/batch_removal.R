@@ -10,7 +10,7 @@
 #'                    batch=ifelse(grepl("Ctrl", colnames(expmatrix)) == TRUE, "1",
 #'                    ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")),
 #'                    row.names = colnames(expmatrix))
-#' expmatrix <- batch_removal(expmatrix, pheno)
+#' batch_removal(expmatrix, pheno)
 #' @export
 batch_removal <- function(expmatrix, pheno){
 

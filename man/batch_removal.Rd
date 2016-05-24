@@ -22,6 +22,6 @@ pheno <- data.frame(sample=c(1:16), treatment=sub("(.*)(_[0-9])", "\\\\1", colna
                    batch=ifelse(grepl("Ctrl", colnames(expmatrix)) == TRUE, "1",
                    ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")),
                    row.names = colnames(expmatrix))
-expmatrix <- batch_removal(expmatrix, pheno)
+batch_removal(expmatrix, pheno)
 }
 
