@@ -20,13 +20,33 @@ vignette: >
 
 <br>
 
-## Installing package
+# exprAnalysis package
 
-This package combines functions from various packages used for analysis of expression data from NGS or expression chips.
+This package combines functions from various packages used to analyze and visualize expression data from NGS or expression chips.
 
-So far, this package is only implemented for human data!
+  + It supports normalized input as e.g. from Cufflinks or expression chip arrays and raw count data from bam file input.
+  + It supports mRNA, miRNA, protein or other expression data.
 
-The package can be installed via github:
+So far, it is only implemented for human data!
+
+It uses function from the following packages:
+
+  + AnnotationDbi for annotating gene information
+  + beadarray for impoting Illumina expression chip files from GenomeStudio
+  + clusterProfiler and DOSE for functional enrichment analysis
+  + DESeq2 for differential expression analysis of raw count data
+  + GenomicAlignments, GenomicFeatures, Rsamtools for reading bam files
+  + pcaGoPromoter for principle component analysis
+  + limma for differential expression analysis of normalised expression data
+  + pathview for mapping KEGG pathways
+  + pheatmap for heatmaps
+  + sva for batch correction
+  + WGCNA for coregulatory network determination
+
+
+## The package can be installed via github:
+
+Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at [https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd](https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd).
 
 ```{r library_private, echo=FALSE, include=FALSE, cache=FALSE}
 #require(devtools)
@@ -59,8 +79,6 @@ enableWGCNAThreads()
 devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
 
 library("exprAnalysis")
-
-# Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd.
 
 # To view the vignette if you built it with the package:
 

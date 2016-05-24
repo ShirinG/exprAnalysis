@@ -1,24 +1,27 @@
 [![Travis-CI Build Status](https://travis-ci.org/ShirinG/exprAnalysis.svg?branch=master)](https://travis-ci.org/ShirinG/exprAnalysis)
 
+# exprAnalyis
+
 This package implements methods to analyze and visualize expression data.
 
-It supports normalized input as e.g. from Cufflinks or expression chip arrays and raw count data from bam file input.
-
-It supports mRNA, miRNA, protein or other expression data.
+  + It supports normalized input as e.g. from Cufflinks or expression chip arrays and raw count data from bam file input.
+  + It supports mRNA, miRNA, protein or other expression data.
 
 So far, it is only implemented for human data!
 
 It uses function from the following packages:
-    + AnnotationDbi for annotating gene information
-    + clusterProfiler and DOSE for functional enrichment analysis
-    + DESeq2 for differential expression analysis of raw count data
-    + GenomicAlignments, GenomicFeatures, Rsamtools for reading bam files
-    + pcaGoPromoter for principle component analysis
-    + limma for differential expression analysis of normalised expression data
-    + pathview for mapping KEGG pathways
-    + pheatmap for heatmaps
-    + sva for batch correction
-    + WGCNA for coregulatory network determination
+
+  + AnnotationDbi for annotating gene information
+  + beadarray for impoting Illumina expression chip files from GenomeStudio
+  + clusterProfiler and DOSE for functional enrichment analysis
+  + DESeq2 for differential expression analysis of raw count data
+  + GenomicAlignments, GenomicFeatures, Rsamtools for reading bam files
+  + pcaGoPromoter for principle component analysis
+  + limma for differential expression analysis of normalised expression data
+  + pathview for mapping KEGG pathways
+  + pheatmap for heatmaps
+  + sva for batch correction
+  + WGCNA for coregulatory network determination
 
 ## Author ##
 

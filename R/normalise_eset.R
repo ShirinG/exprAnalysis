@@ -27,3 +27,4 @@ normalise_eset <- function(eset, method_norm="quantile", transform="none"){
   return(eset)
 }
 
+# devtools::document()
