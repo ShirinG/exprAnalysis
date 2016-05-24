@@ -1,0 +1,480 @@
+---
+title: "CummeRbund-Vignette"
+author: "Shirin Glander"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: spacelab
+    highlight: kate
+  pdf_document:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{CummeRbund-Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+-----------
+
+<br>
+
+
+```{r libraries, echo=TRUE, include=FALSE, cache=FALSE, eval=FALSE}
+library(cummeRbund)
+```
+
+-----------
+
+<br>
+
+## CummeRbund
+
+cummeRbund is a visualization package for Cufflinks high-throughput sequencing data.
+
+cummeRbund was designed to process the multi-file output format for a 'cuffdiff' differential expression analysis. In
+this type of analysis, a user will use a reference .gtf file (either known annotation or a .gtf file created from a cufflinks
+assembly or merge of assemblies) and quantitate the expression values and differential regulation of the annotation(s)
+in the .gtf file across two or more SAM/BAM files. By design, cuffdiff produces a number of output files that contain
+test results for changes in expression at the level of transcripts, primary transcripts, and genes. It also tracks changes
+in the relative abundance of transcripts sharing a common transcription start site, and in the relative abundances of
+the primary transcripts of each gene. Tracking the former allows one to see changes in splicing, and the latter lets
+one see changes in relative promoter use within a gene.
+
+cuffdiff calculates the FPKM of each transcript, primary transcript, and gene in each sample. Primary transcript
+and gene FPKMs are computed by summing the FPKMs of transcripts in each primary transcript group or gene
+group.
+
+cuffdiff also performs differential expression tests between supplied conditions. This tab delimited file lists the
+results of differential expression testing between samples for spliced transcripts, primary transcripts, genes, and coding
+sequences. 
+
+```{r input, echo=TRUE, eval=FALSE}
+cuff <- readCufflinks()
+cuff
+
+#runInfo(cuff)
+
+replicates(cuff)
+
+```
+
+<br>
+
+### Global statistics and Quality Control
+
+Several plotting methods are available that allow for quality-control or global analysis of cufflinks data. A good
+place to begin is to evaluate the quality of the model fitting. Overdispersion is a common problem in RNA-Seq data.
+As of cufflinks v2.0 mean counts, variance, and dispersion are all emitted, allowing you to visualize the estimated
+overdispersion for each sample as a quality control measure.
+
+Count vs dispersion plot by condition for all genes:
+
+```{r dispersion_plot, echo=TRUE, fig.width=10, fig.height= 5, eval=FALSE}
+#dispersionPlot(genes(cuff))
+dispersionPlot(cuff)
+
+```
+
+<br>
+
+Alternatively a call to dispersionPlot(cuff) directly will allow you to visualize the full model fit.
+The squared coefficient of variation is a normalized measure of cross-replicate variability that can be useful for
+evaluating the quality your RNA-seq data. Differences in CV^2
+can result in lower numbers of differentially expressed
+genes due to a higher degree of variability between replicate fpkm estimates.
+
+ The squared coefficient of variation allows visualization of cross-replicate variability between conditions and can
+be a useful metric in determining data quality at the gene level or isoform level.
+
+```{r scv_plot, echo=TRUE, warning = FALSE, message=FALSE, eval=FALSE}
+
+fpkmSCVPlot(genes(cuff))
+#fpkmSCVPlot(isoforms(cuff))
+
+```
+
+<br>
+
+To assess the distributions of FPKM scores across samples, you can use the csDensity plot.
+
+```{r density_plot, echo=TRUE, warning=FALSE, message=FALSE, eval=FALSE}
+#csDensity(genes(cuff))
+
+csDensity(genes(cuff),replicates=T)
+
+```
+
+<br>
+
+Boxplots can be visualized using the csBoxplot method.
+
+```{r boxplot, echo=TRUE, eval=FALSE}
+#csBoxplot(genes(cuff))
+
+csBoxplot(genes(cuff),replicates=T)
+
+```
+
+<br>
+
+A matrix of pairwise scatterplots can be drawn using the csScatterMatrix() method.
+Individual Pairwise comparisons can be made by using csScatter . You must specify the sample names to use for
+the x and y axes.
+
+Scatterplots can be useful to identify global changes and trends in gene expression
+between pairs of conditions. Pairwise scatterplots can identify biases in gene expression
+between two particular conditions.
+
+```{r scatterplot, echo=TRUE, warning=FALSE, message=FALSE, eval=FALSE}
+csScatterMatrix(genes(cuff))
+#csScatter(genes(cuff),"Treatment","Control",smooth=T)
+
+#csDendro(genes(cuff))
+csDendro(genes(cuff),replicates=T)
+```
+
+<br>
+
+MvsA plots can be useful to determine any systematic bias that may be present between conditions. The CuffData
+method MAplot() can be used to examine these intensity vs fold-change plots. You must specify the sample names
+to use for the pairwise comparison with x and y.
+
+MA plots can identify biases across ranges of intensity
+and fold-change.
+
+```{r MAplot, echo=TRUE, warning=FALSE, message=FALSE, eval=FALSE}
+MAplot(genes(cuff),"Treatment","Control")
+
+MAplot(genes(cuff),"Treatment","Control",useCount=T)
+
+```
+
+<br>
+
+Volcano plots are also available for the CuffData objects.
+For individual pairwise comparisons, you must specify the comparisons by sample name.
+
+Volcano plots explore the relationship between fold-change and significance.
+
+```{r volcano_plot, echo=TRUE, warning=FALSE, message=FALSE, eval=FALSE}
+#csVolcanoMatrix(genes(cuff))
+csVolcano(genes(cuff),"Treatment","Control")
+
+```
+
+<br>
+
+Similarities between conditions and/or replicates can provide useful insight into the relationship between various
+groupings of conditions and can aid in identifying outlier replicates that do not behave as expected. cummeRbund
+provides the csDistHeat() method to visualize the pairwise similarities (distanc matrix) between conditions:
+
+```{r distance_matrix, echo=TRUE, eval=FALSE, eval=FALSE}
+csDistHeat(genes(cuff),replicates=T)
+
+```
+
+------------------------
+
+<br>
+
+### Accessing Data
+
+Feature-level information can be accessed directly from a CuffData object using the fpkm, repFpkm, count, diffData,
+or annotation methods:
+
+```{r features, echo=TRUE, eval=FALSE}
+gene.features<-annotation(genes(cuff))
+head(gene.features)
+
+gene.fpkm<-fpkm(genes(cuff))
+head(gene.fpkm)
+
+gene.repFpkm<-repFpkm(genes(cuff))
+head(gene.repFpkm)
+
+gene.counts<-count(genes(cuff))
+head(gene.counts)
+
+isoform.fpkm<-fpkm(isoforms(cuff))
+head(isoform.fpkm)
+
+gene.diff<-diffData(genes(cuff))
+head(gene.diff)
+
+```
+
+<br>
+
+Vectors of sample names and feature names are available by using the samples and featureNames methods:
+
+```{r sample_names, echo=TRUE, eval=FALSE}
+#sample.names<-samples(genes(cuff))
+#head(sample.names)
+
+gene.featurenames<-featureNames(genes(cuff))
+head(gene.featurenames)
+
+```
+
+<br>
+
+To facilitate Bioconductor-like operations, an 'FPKM-matrix' can be returned easily using the fpkmMatrix method:
+A matrix of replicate FPKM values can be retrieved by using repFpkmMatrix
+Similarly, a matrix of normalized counts can be generated by using countMatrix
+
+```{r fpkm_matrix, echo=TRUE, eval=FALSE}
+gene.matrix<-fpkmMatrix(genes(cuff))
+#head(gene.matrix)
+
+gene.rep.matrix<-repFpkmMatrix(genes(cuff))
+#head(gene.rep.matrix)
+#head(gene.features)
+gene.rep.matrix_new <- merge(gene.rep.matrix, unique(gene.features[,c(1,4)]), by.x = "row.names", by.y = "gene_id", all.x = T, all.y = F)
+write.table(gene.rep.matrix_new, "W:/Shirin/Uvitis_Projekt/Cuffdiff/gene.rep.FPKM.matrix.txt", row.names = T, col.names = T, sep="\t")
+
+gene.count.matrix<-countMatrix(genes(cuff))
+#head(gene.count.matrix)
+```
+
+------------------
+
+<br>
+
+###  Dimensionality reduction
+
+Dimensionality reduction is an informative approach for clustering and exploring the relationships between conditions.
+It can be useful for feature selection as well as identifying the sources of variability within your data. To this end, we
+have applied two different dimensionality reduction strategies in cummeRbund: principal component analysis (PCA)
+and multi-dimensional scaling (MDS). We provide the two wrapper methods, PCAplot and MDSplot.
+
+CummeRbund also includes a convenience wrapper around the NMFN function nnmf for non-negative matrix factorization. You can use the csNMF() method for either CuffData and CuffFeatureSet objects.
+
+```{r pca, echo= FALSE, eval=FALSE}
+
+#PCAplot(genes(cuff),"PC1","PC2")
+#MDSplot(genes(cuff))
+#PCAplot(genes(cuff),"PC1","PC2",replicates=T)
+MDSplot(genes(cuff),replicates=T)
+#csNMF(genes(cuff),replicates=T)
+
+```
+
+------------------
+
+<br>
+
+### Identifying DE genes
+
+```{r DE_genes, echo=TRUE, eval=FALSE}
+gene.features<-annotation(genes(cuff))
+
+#sigMatrix(cuff,level="genes",alpha=0.05)
+
+sigGeneIds <- getSig(cuff,alpha=0.05,level="genes")
+#head(sigGeneIds)
+
+length(sigGeneIds)
+
+sigGenes <- getGenes(cuff,sigGeneIds)
+#sigGenes
+
+#gene_short_name values (and corresponding XLOC_* values) can be retrieved from the CuffGeneSet by using:
+names <- featureNames(sigGenes)
+row.names(names )= names$tracking_id
+diffGenesNames <- as.matrix(names)
+diffGenesNames <- diffGenesNames[,-1]
+
+# get the data for the significant genes
+diffGenesData <- diffData(sigGenes)
+row.names(diffGenesData) = diffGenesData$gene_id
+diffGenesData <- diffGenesData[,-1]
+
+# merge the two matrices by row names
+diffGenesOutput <- merge(diffGenesNames,diffGenesData,by="row.names")
+diffGenesOutput
+head(diffGenesOutput)
+#nrow(diffGenesOutput)
+write.table(diffGenesOutput, "DE_genes_TreatmentVsControl.txt", sep="\t", row.names= F, col.names=T, quote=F)
+
+
+#head(gene.features)
+#nrow(gene.features)
+
+DEgenes_features <- gene.features[which(gene.features$gene_id %in% diffGenesOutput$Row.names),]
+
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+DEgenes_features$ENSEMBL_gene <- mapIds(org.Hs.eg.db,
+                                   keys=DEgenes_features$oId,
+                                   column="ENSEMBL",
+                                   keytype="ENSEMBLTRANS",
+                                   multiVals="first")
+DEgenes_features$entrez <- mapIds(org.Hs.eg.db,
+                                   keys=DEgenes_features$oId,
+                                   column="ENTREZID",
+                                   keytype="ENSEMBLTRANS",
+                                   multiVals="first")
+DEgenes_features$SYMBOL <- mapIds(org.Hs.eg.db,
+                                   keys=DEgenes_features$oId,
+                                   column="SYMBOL",
+                                   keytype="ENSEMBLTRANS",
+                                   multiVals="first")
+head(DEgenes_features)
+write.table(DEgenes_features, "DE_genes_annotationInfo_TreatmentVsControl.txt", sep="\t", row.names= F, col.names=T, quote=F)
+
+
+#get p-value information for all genes
+allGenesIds <- getSig(cuff, alpha=1, level = "genes")
+#head(allGenesIds)
+#length(allGenesIds)
+
+allGenes <- getGenes(cuff, allGenesIds)
+#allGenes
+
+names<-featureNames(allGenes)
+row.names(names)=names$tracking_id
+GenesNames<-as.matrix(names)
+GenesNames<-GenesNames[,-1, drop=FALSE]
+#head(GenesNames)
+
+GenesData<-diffData(allGenes)
+row.names(GenesData)=GenesData$gene_id
+GenesData<-GenesData[,-1]
+#head(GenesData)
+
+GenesOutput<-merge(GenesNames,GenesData,by="row.names")
+#head(GenesOutput)
+nrow(GenesOutput)
+write.table(GenesOutput, "AllGenes_DEinfo_TreatmentVsControl.txt", sep="\t", row.names= F, col.names=T, quote=F)
+
+
+```
+
+<br>
+
+```{r DE_other, echo= TRUE, eval=FALSE}
+
+### Identifying DE isoforms
+
+getSig(cuff,alpha=0.05,level="isoforms")
+isoform_diff_data <- diffData(isoforms(cuff), "Treatment", "Control")
+sig_isoform_data <- subset(isoform_diff_data, (significant == "yes"))
+nrow(sig_isoform_data)
+
+### Identifying DE TSS
+
+getSig(cuff,alpha=0.05,level="TSS")
+tss_diff_data <- diffData(TSS(cuff), "Treatment", "Control")
+sig_tss_data <- subset(tss_diff_data, (significant == "yes"))
+nrow(sig_tss_data)
+
+### Identifying DE CDS
+
+getSig(cuff,alpha=0.05,level="CDS")
+cds_diff_data <- diffData(CDS(cuff), "Treatment", "Control")
+sig_cds_data <- subset(cds_diff_data, (significant == "yes"))
+nrow(sig_cds_data)
+
+### Identifying DE promoters
+
+getSig(cuff,alpha=0.05,level="promoters")
+promoter_diff_data <- distValues(promoters(cuff), "Ctrl", "Control")
+sig_promoter_data <- subset(promoter_diff_data, (significant == "yes"))
+nrow(sig_promoter_data)
+
+### Identifying DE splicing
+
+getSig(cuff,alpha=0.05,level="splicing")
+splicing_diff_data <- distValues(splicing(cuff), "Treatment", "Control")
+sig_splicing_data <- subset(splicing_diff_data, (significant == "yes"))
+nrow(sig_splicing_data)
+
+### Identifying DE relCDS
+
+getSig(cuff,alpha=0.05,level="relCDS")
+relCDS_diff_data <- distValues(relCDS(cuff), "Treatment", "Control")
+sig_relCDS_data <- subset(relCDS_diff_data, (significant == "yes"))
+nrow(sig_relCDS_data)
+
+```
+
+--------------------
+
+<br>
+
+### DE genes plots
+
+The csHeatmap() function is a plotting wrapper that takes as input either a CuffGeneSet or a CuffFeatureSet
+object (essentially a collection of genes and/or features) and produces a heatmap of FPKM expression values. The
+'cluster' argument can be used to re-order either 'row', 'column', or 'both' dimensions of this matrix. By default, the
+Jensen-Shannon distance is used as the clustering metric, however, any function that produces a dist object can be
+passed to the 'cluster' argument as well.
+
+The csScatter() method can be used to produce scatter plot comparisons between any two conditions.
+
+The volcano plot is a useful visualization to compare fold change between any two conditions and significance
+(-log P-values).
+
+Dendrograms can provide insight into the relationships between conditions for various genesets (e.g. significant
+genes used to draw relationships between conditions). As of v1.1.3 the method csDendro() can be used to plot a
+dendrogram based on Jensen-Shannon distances between conditions for a given CuffFeatureSet or CuffGeneSet.
+
+
+```{r DEgenes_plots, echo= FALSE, fig.width=15, fig.height=10, warning=FALSE, message=FALSE, eval=FALSE}
+#csHeatmap(sigGenes,cluster="both")
+
+csHeatmap(sigGenes,cluster="both", replicates=T)
+
+expressionBarplot(sigGenes)
+
+csScatter(sigGenes,"Treatment","Control",smooth=T)
+
+csVolcano(sigGenes,"Treatment","Control")
+
+#Similar plots can be made for all sub-level features of a CuffGeneSet class by specifying which slot you would like to plot (eg. isoforms(myGenes),TSS(myGenes),CDS(myGenes)). But there are none here!
+
+#csHeatmap(isoforms(sigGenes),cluster="both",labRow=F)
+
+#csHeatmap(TSS(sigGenes),cluster="both",labRow=F)
+
+csDendro(sigGenes, replicates = TRUE)
+
+```
+
+---------------------
+
+<br>
+
+### Clustering
+
+K-means clustering is a useful tool that can be helpful in identifying clusters of genes with similar expression profiles.
+In fact, these profiles are learned from the data during the clustering. csCluster() uses the pam() method from the
+clustering package to perform the partitioning around medoids. In this case however, the distance metric used by
+default is the Jensen-Shannon distance instead of the default Euclidean distance. Prior to performing this particular
+partitioning, the user must choose the number of clusters (K) into which the expression profiles should be divided.
+
+As of v1.1.1 of cummeRbund, the output of csCluster is a modified pam object. This replaces the default plotting
+behavior of the original csCluster plot to allow for further analysis of the clustering results. The original plotting
+behavior has been recapitulated in the csClusterPlot() method.
+
+```{r clustering, echo=TRUE, eval=FALSE}
+
+ic <- csCluster(sigGenes,k=2)
+head(ic$cluster)
+
+csClusterPlot(ic)
+
+```
+
+```{r render, eval=FALSE, echo=FALSE}
+rmarkdown::render('vignettes/CummeRbund.Rmd', output_file = 'U:/exprAnalysis_test/CummeRbundVignette.html')
+
+browseVignettes(package = 'ExpressionAnalysis')
+```
+
+Another common question in large-scale gene expression analyses is 'How can I find genes with similar expression
+profiles to gene x?'. We have implemented a method, findSimilar to allow you to identify a fixed number of the most
+similar genes to a given gene of interest.

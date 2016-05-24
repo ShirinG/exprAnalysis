@@ -97,6 +97,12 @@ data("expmatrix")
 
 If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data such as the **expmatrix** example.
 
+<br>
+
+### Cuffdiff
+
+See CummeRbund vignette CummeRbundVignette.html.
+
 -----------
 
 <br>
@@ -341,7 +347,23 @@ pheatmap::pheatmap(sampleDistMatrix,
 
 df <- data.frame(treatment = SummarizedExperiment::colData(data_DESeq)[,c("treatment")], row.names = rownames(SummarizedExperiment::colData(data_DESeq)))
 pheatmap::pheatmap(expmatrix[select,], cluster_rows=TRUE, show_rownames=TRUE, cluster_cols=TRUE, annotation_col=df)
+```
 
+```{r int_heatmaps, eval=FALSE}
+# Interactive heatmap
+
+#devtools::install_github('talgalili/heatmaply')
+library(heatmaply)
+
+# sample correlation
+hm <- heatmapr(cor(expmatrix[select,]), k_row = 4, k_col = 4)
+
+# gene correlation
+hm <- heatmapr(cor(t(expmatrix[select,])), k_row = NULL, k_col = NULL)
+
+heatmaply(hm)
+
+#Hover over heatmap to see individual values and sample/ gene IDs
 ```
 
 -----------
