@@ -36,8 +36,4 @@ It also calculates TF and GO term enrichments.
 \details{
 Both, PC plot (as .pdf) and tables (as tab delimited .txt) of enriched TFs and GO terms are saved by default to the working directory or to the given path.
 }
-\examples{
- groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
- pca_plot_enrich(expmatrix, groups)
-}
 

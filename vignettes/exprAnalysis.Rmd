@@ -762,10 +762,6 @@ pathview_func(DEgenes_pw, logFCcolumn="logFC", pathway.id = "04620", out.suffix 
 
 ## Venn diagrams and Biological theme comparison
 
-With **"gplots"** (installed by package).
-
-Example:
-
 ```{r venn, eval=FALSE, fig.width=5, fig.height=5}
 library(gplots)
 

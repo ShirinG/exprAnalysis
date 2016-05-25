@@ -8,9 +8,6 @@
 #' @param PCs Principle components to plot (pick two). Defaults to PCs 1 and 2.
 #' @param main Main title. Defaults to "PCA plot".
 #' @return A PCA plot.
-#' @examples
-#'  groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
-#'  pca_plot(expmatrix, groups)
 #' @export
 pca_plot <- function(expmatrix, groups, PCs = c(1,2), main = "PCA plot"){
 

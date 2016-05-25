@@ -15,9 +15,6 @@
 #' @param org a character vector with the organism. Can be "Hs", "Mm" or "Rn". Only needed if inputType is "geneSymbol" or "entrezID". See details. Default is "Hs".
 #' @param projectfolder File path where to save the tables to. Defaults to working directory. Here, it saves the output to a subfolder called "pcaGoPromoter".
 #' @return A PCA plot and tables of enriched TFs and GO terms.
-#' @examples
-#'  groups <- as.factor(c(rep("control",4), rep("TolLPS",4), rep("TolS100A8",4), rep("ActLPS",4)))
-#'  pca_plot_enrich(expmatrix, groups)
 #' @export
 pca_plot_enrich <- function(expmatrix, groups, PCs = c(1,2), main = "PCA plot", percentage = 2.5, inputType = "geneSymbol", org = "Hs", projectfolder = getwd()){
 
