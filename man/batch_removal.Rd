@@ -21,7 +21,7 @@ Removes batch effects in combined datasets using sva's ComBat() function.
 test_expmatrix <- matrix(rnorm(100*30),nrow=100,ncol=8,
                          dimnames=list(c(rownames(expmatrix[1:100,1:8])),
                          c(colnames(expmatrix[1:100,1:8]))))
-pheno <- data.frame(batch=rep(c(1,2), 4), row.names = colnames(test_expmatrix))
+pheno <- data.frame(batch=as.factor(rep(c(1,2), 4)), row.names = colnames(test_expmatrix))
 test_expmatrix <- batch_removal(expmatrix=test_expmatrix, pheno)
 }
 
