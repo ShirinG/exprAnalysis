@@ -27,7 +27,7 @@ This package combines functions from various packages used to analyze and visual
   + It supports normalized input as e.g. from Cufflinks or expression chip arrays and raw count data from bam file input.
   + It supports mRNA, miRNA, protein or other expression data.
 
-So far, it is only implemented for human data!
+So far, it is only implemented for human and mouse data!
 
 It uses function from the following packages:
 
@@ -43,18 +43,15 @@ It uses function from the following packages:
   + sva for batch correction
   + WGCNA for coregulatory network determination
 
+-----------
 
-## The package can be installed via github:
+<br>
 
-Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at [https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd](https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd).
+# Prepare session
 
 ```{r library_private, echo=FALSE, include=FALSE, cache=FALSE}
 #require(devtools)
 devtools::load_all()
-
-options(stringsAsFactors = FALSE)
-#WGCNA::enableWGCNAThreads()
-
 ```
 
 ```{r library_official, eval=FALSE}
@@ -73,8 +70,17 @@ orig_par <- par(no.readonly=T)
 
 options(stringsAsFactors = FALSE)
 enableWGCNAThreads()
+```
 
+-----------
 
+<br>
+
+## The package can be installed via github:
+
+Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at [https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd](https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd).
+
+```{r library_install, eval=FALSE}
 # install package from github
 devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
 
@@ -114,7 +120,7 @@ This package contains two example matrices of randomly generated expression data
 # doesn't exist any more (is now stored as raw data)
 ```
 
-```{r input_data}
+```{r input_data, eval=FALSE}
 data("countmatrix")
 data("expmatrix")
 ```
@@ -146,6 +152,9 @@ read_bam_to_countmatrix() returns a DESeq data set that can directly be used wit
 In read_bam_to_countmatrix() fragments will be counted only once to each gene, even if they overlap multiple exons of a gene which may themselves be overlapping.
 
 ```{r countdata_bam, eval=FALSE}
+library(Rsamtools)
+library(GenomicAlignments)
+library(GenomicFeatures)
 
 # Locate alignment files
 dir <- getwd()
@@ -185,7 +194,7 @@ See DESeq2 Vignette for additional details.
 countmatrix <-   read.table(file.path(projectfolder, "Countdata", outPrefix, paste0(outPrefix, "_Summarize_overlaps_count_matrix.txt")), header=T, sep = "\t")
 ```
 
-```{r read_in_countdata2, eval=TRUE}
+```{r read_in_countdata2, eval=FALSE}
 design <- gsub("(.*)(_[0-9])", "\\1", colnames(countmatrix))
 ExpDesign <- data.frame(row.names=colnames(countmatrix), treatment = design)
 
@@ -203,7 +212,7 @@ data <- DESeq2::DESeqDataSetFromMatrix(countData = countmatrix, colData=ExpDesig
 Note: the rlog transformation is provided for applications other than differential testing. For differential testing we recommend the DESeq function applied to raw counts, as described later in this workflow, which also takes into account the dependence of the variance of counts on the mean value during the dispersion estimation step.
 
 
-```{r DESeq2, eval=TRUE}
+```{r DESeq2, eval=FALSE}
 data <- data[rowSums(DESeq2::counts(data)) > 1, ]
 
 data_DESeq <- DESeq2::DESeq(data)
@@ -216,7 +225,7 @@ expmatrix <- SummarizedExperiment::assay(expmatrix_DESeq)
 
 #### Dispersion plot
 
-```{r dispersion_plot, eval=TRUE, fig.width=10, fig.height=5}
+```{r dispersion_plot, eval=FALSE, fig.width=10, fig.height=5}
 DESeq2::plotDispEsts(data_DESeq, main="Dispersion Estimates")
 ```
 
@@ -295,6 +304,8 @@ sampleSheet   <- file.path("U:", "exprAnalysis_test/samplesheet.csv")
 dataFile      <- file.path("SampleProbeProfile.txt")
 qcFile        <- file.path("ControlProbeProfile.txt")
 sampleSheet   <- file.path("samplesheet.csv")
+
+# define Illumina Expression Array: "HumanHT-12 v?", "MouseWG-6 v?", "MouseRef-8 v?"
 expressionchipType <- "HumanHT-12 v4"
 
 eset <- read_Illumina(dataFile, qcFile, sampleSheet, expressionchipType, ProbeID = "PROBE_ID", skip = 0, controlID="ProbeID", qc.skip = 0, method_norm ="none", transform="log2")
@@ -341,7 +352,9 @@ var_vs_mean(expmatrix)
 
 ## Intersample variances
 
-```{r variance_sumOverlaps, eval=TRUE, fig.width= 5}
+```{r variance_sumOverlaps, eval=FALSE, fig.width= 5}
+library(corrgram)
+
 Ctrl_cor <- expmatrix[,grep("Ctrl", colnames(expmatrix))]
 
 corrgram::corrgram(Ctrl_cor, order=TRUE, lower.panel=corrgram::panel.pie,
@@ -386,9 +399,12 @@ Here, of the 30 most highly expressed genes.
 select <- order(rowMeans(expmatrix),decreasing=TRUE)[1:30]
 
 heatmaps(expmatrix[select,], samplecols = rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3"), each=4))
+```
 
+```{r heatmaps2, eval=FALSE}
+# Heatmap function from DESeq2, using pheatmap:
 
-# Heatmap function from DESeq2:
+library(pheatmap)
 
 sampleDists <- dist(t(expmatrix))
 sampleDistMatrix <- as.matrix(sampleDists)
@@ -512,10 +528,9 @@ wgcna_heatmaps(MEs, datExpr, datTraits)
 ### Output file for gene ontology analysis
 
 ```{r wgcna_output, eval=FALSE}
-
 # Annotate
 genes = colnames(datExpr)
-datExpr_anno <- geneAnnotations(input=genes, keys=genes, column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+datExpr_anno <- geneAnnotations(input=genes, keys=genes, column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL", organism = "human")
 
 # Correlations of genes and traits
 traitsCor=cor(datExpr,datTraits,use="p")
@@ -530,11 +545,12 @@ write.table(dataOutput,"AllGenesResults.txt",row.names=F,sep="\t")
 
 ### Module eigengene expression plots
 
-```{r module_eigengene_plot, eval=TRUE, fig.width=10, fig.height=15}
+```{r wgcna_data, eval=FALSE}
 data(MEs)
 data(dataOutput)
+```
 
-
+```{r module_eigengene_plot, eval=TRUE, fig.width=10, fig.height=15}
 layout(matrix(c(1:length(colnames(MEs)),12,rep(13,3)), ncol=3, byrow=TRUE), heights=c(rep(3,4), 0.5))
 
 for (color in gsub("ME", "", colnames(MEs))){
@@ -596,7 +612,11 @@ For raw read count data.
 
 <br>
 
-```{r DEgenes_DESeq2, eval=TRUE, warning=FALSE}
+```{r DEgenes_DESeq2, eval=FALSE, warning=FALSE}
+library(DESeq2)
+library(ggplot2)
+library(ggrepel)
+
 # find possible contrasts with
 DESeq2::resultsNames(data_DESeq)
 
@@ -622,7 +642,6 @@ p+ggrepel::geom_text_repel(data=results[1:10, ], ggplot2::aes(label=rownames(res
 ```
 
 ```{r volcano_simple, eval=FALSE, include=FALSE, warning=FALSE}
-
 # Make a basic volcano plot
 plot(res[,2], -log10(res[,6]), main = "Volcano plot", xlab="l2fc", ylab="-log10(q-val)", pch = 20, col=scales::alpha("black", 0.5))
 
@@ -642,7 +661,7 @@ calibrate::textxy(res[1:10,2], -log10(res[1:10,6]), labs=rownames(res[1:10,]), p
 
 #### MA-plot
 
-```{r ma_plot, echo=TRUE, fig.width=5, fig.height=5}
+```{r ma_plot, eval=FALSE, fig.width=5, fig.height=5}
 DESeq2::plotMA(res, main="MA Plot", ylim=c(-2,2))
 ```
 
@@ -650,8 +669,7 @@ DESeq2::plotMA(res, main="MA Plot", ylim=c(-2,2))
 
 #### plotCounts, which normalizes counts by sequencing depth and adds a pseudocount of 1/2 to allow for log scale plotting
 
-```{r plot_counts, echo=TRUE, fig.width=10, fig.height=3}
-
+```{r plot_counts, eval=FALSE, fig.width=10, fig.height=3}
 par(mfrow=c(1,3))
 
 for (i in 1:3){
@@ -659,7 +677,6 @@ for (i in 1:3){
   main = gene
   DESeq2::plotCounts(data_DESeq, gene=gene, intgroup="treatment", main = main)
 }
-
 ```
 
 -----------
@@ -672,25 +689,30 @@ Can be used to add e.g. ENTREZ ID, ENSEMBL ID, etc. to gene name.
 
 ```{r geneAnnotations, eval=TRUE, message=FALSE, warning=FALSE}
 DEgenes_pw <- geneAnnotations(input=DEgenes_pw, keys=row.names(DEgenes_pw[1:5,]), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
-DEgenes_DESeq <- geneAnnotations(input=DEgenes_DESeq, keys=row.names(res[1:5,]), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
-
 ```
 
+```{r geneAnnotations2, eval=FALSE, message=FALSE, warning=FALSE}
+DEgenes_DESeq <- geneAnnotations(input=DEgenes_DESeq, keys=row.names(res[1:5,]), column=c("ENTREZID", "ENSEMBL"), keytype="SYMBOL")
+```
 -----------
 
 <br>
 
 ## Enrichment Analysis using clusterPofiler
 
-```{r clusterProfiler, eval=TRUE, warning=FALSE, message=FALSE}
+```{r clusterProfiler, eval=FALSE, warning=FALSE, message=FALSE}
+library(clusterProfiler)
+library(DOSE)
+
 geneList <- as.vector(Allgenes_limma_pw$logFC)
 names(geneList) <- rownames(Allgenes_limma_pw)
 gene <- na.omit(DEgenes_pw$ENTREZID)
 
+OrgDb <- org.Hs.eg.db::org.Hs.eg.db # can also be org.Mm.eg.db::org.Mm.eg.db
 
 # Group GO
 ggo <- clusterProfiler::groupGO(gene     = gene,
-                                OrgDb    = org.Hs.eg.db::org.Hs.eg.db,
+                                OrgDb    = OrgDb,
                                 ont      = "BP",
                                 level    = 3,
                                 readable = TRUE)
@@ -699,7 +721,7 @@ barplot(ggo, drop=TRUE, showCategory=12)
 
 # GO over-representation test
 ego <- clusterProfiler::enrichGO(gene          = gene,
-                                 OrgDb         = org.Hs.eg.db::org.Hs.eg.db,
+                                 OrgDb         = OrgDb,
                                  ont           = "BP",
                                  pAdjustMethod = "BH",
                                  pvalueCutoff  = 0.05,
@@ -749,7 +771,9 @@ With **"gplots"** (installed by package).
 
 Example:
 
-```{r venn, eval=TRUE, fig.width=5, fig.height=5}
+```{r venn, eval=FALSE, fig.width=5, fig.height=5}
+library(gplots)
+
 venn_list <- list(genelist1 = na.omit(rownames(DEgenes_pw)[1:50]), genelist2 = na.omit(rownames(DEgenes_pw)[30:80]), genelist3 = na.omit(rownames(DEgenes_pw)[48:100]))
 
 gplots::venn(venn_list, show.plot=TRUE, small=0.7, showSetLogicLabel=FALSE, simplify = TRUE)
@@ -762,7 +786,7 @@ mtext("If you want a header, put it here", side=3, cex = 0.8)
 compGO <- clusterProfiler::compareCluster(geneCluster   = venn_list,
                                           fun           = "enrichGO",
                                           ont           = "BP",
-                                          OrgDb         = org.Hs.eg.db,
+                                          OrgDb         = OrgDb,
                                           qvalueCutoff  = 0.001,
                                           pAdjustMethod = "BH",
                                           readable      = TRUE)
@@ -772,7 +796,7 @@ compKEGG <- clusterProfiler::compareCluster(geneCluster   = venn_list,
                                             fun           = "enrichKEGG",
                                             qvalueCutoff  = 0.05,
                                             pAdjustMethod = "BH")
-compKEGG <- clusterProfiler::setReadable(compKEGG, OrgDb = org.Hs.eg.db)
+compKEGG <- clusterProfiler::setReadable(compKEGG, OrgDb = OrgDb)
 
 
 compMKEGG <- clusterProfiler::compareCluster(geneCluster   = venn_list,

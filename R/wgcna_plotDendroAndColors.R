@@ -6,8 +6,6 @@
 #' @param datTraits Phenotype data.
 #' @param net Output from blockwiseModules().
 #' @return Plots module-trait correlation dendrogram
-#' @examples
-#' wgcna_plotDendroAndColors(datExpr, datTraits)
 #' @export
 wgcna_plotDendroAndColors <- function(datExpr, datTraits, net){
 

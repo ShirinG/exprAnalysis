@@ -19,7 +19,4 @@ Plots module-trait correlation dendrogram
 \description{
 This function implements module-trait correlation dendrogram plotting with wgcna.
 }
-\examples{
-wgcna_plotDendroAndColors(datExpr, datTraits)
-}
 

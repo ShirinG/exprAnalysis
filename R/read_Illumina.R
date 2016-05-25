@@ -11,8 +11,6 @@
 #' @param method_norm Normalisation method. See ?beadarray::readBeadSummaryData for details.
 #' @param transform Transformation method. See ?beadarray::readBeadSummaryData for details.
 #' @return Returns expression set object.
-#' @examples
-#' read_Illumina(dataFile, qcFile, sampleSheet, expressionchipType)
 #' @export
 read_Illumina <- function(dataFile, qcFile, sampleSheet, expressionchipType, ProbeID = "PROBE_ID", controlID="ProbeID", method_norm ="none", transform="log2") {
 

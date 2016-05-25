@@ -20,7 +20,4 @@ Produces quality control plots.
 \description{
 Produces quality control plots.
 }
-\examples{
-quality_control_plots(eset)
-}
 

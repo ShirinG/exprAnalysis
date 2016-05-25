@@ -6,8 +6,6 @@
 #' @param method_norm Normalisation method. See ?beadarray::readBeadSummaryData for details
 #' @param transform Transformation method. See ?beadarray::readBeadSummaryData for details
 #' @return Returns (normalized) expression set object.
-#' @examples
-#' normalise_eset(...)
 #' @export
 normalise_eset <- function(eset, method_norm="quantile", transform="none"){
 

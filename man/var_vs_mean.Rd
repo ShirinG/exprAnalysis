@@ -15,7 +15,4 @@ Returns a plot of mean against variance of gene expression across samples and co
 \description{
 This function plots mean against variance of gene expression across samples and calculates the linear correlation.
 }
-\examples{
-var_vs_mean(expmatrix)
-}
 

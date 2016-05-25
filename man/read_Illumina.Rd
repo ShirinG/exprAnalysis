@@ -31,7 +31,4 @@ Returns expression set object.
 \description{
 Reads in Illumina expression data.
 }
-\examples{
-read_Illumina(dataFile, qcFile, sampleSheet, expressionchipType)
-}
 

@@ -7,8 +7,6 @@
 #' @param datTraits Phenotype data.
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "WGCNA".
 #' @return Writes Module_trait_correlations.txt and Module_CorPval.txt Plots module-trait correlation heatmap.
-#' @examples
-#' wgcna_heatmaps(MEs, datExpr, datTraits)
 #' @export
 wgcna_heatmaps <- function(MEs, datExpr, datTraits, projectfolder = getwd()){
 

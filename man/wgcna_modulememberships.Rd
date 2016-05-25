@@ -24,7 +24,4 @@ Writes geneModuleMembership.txt and geneModuleMembershipPvalue.txt. Saves Intram
 \description{
 This function implements module membership analysis with wgcna.
 }
-\examples{
-wgcna_modulememberships(datExpr, MEs, moduleColors)
-}
 

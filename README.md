@@ -7,7 +7,7 @@ This package implements methods to analyze and visualize expression data.
   + It supports normalized input as e.g. from Cufflinks or expression chip arrays and raw count data from bam file input.
   + It supports mRNA, miRNA, protein or other expression data.
 
-So far, it is only implemented for human data!
+So far, it is only implemented for human and mouse data!
 
 It uses function from the following packages:
 

@@ -8,8 +8,6 @@
 #' @param moduleColors Module colors.
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "WGCNA".
 #' @return Writes geneModuleMembership.txt and geneModuleMembershipPvalue.txt. Saves Intramodular analysis plots to pdf. Returns datKME.
-#' @examples
-#' wgcna_modulememberships(datExpr, MEs, moduleColors)
 #' @export
 wgcna_modulememberships <- function(datExpr, datTraits, MEs, moduleColors, projectfolder = getwd()){
 

@@ -19,7 +19,4 @@ Returns (normalized) expression set object.
 \description{
 Reads in Illumina expression data.
 }
-\examples{
-normalise_eset(...)
-}
 

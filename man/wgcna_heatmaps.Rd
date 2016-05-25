@@ -21,7 +21,4 @@ Writes Module_trait_correlations.txt and Module_CorPval.txt Plots module-trait c
 \description{
 This function implements module-trait correlation heatmap plotting with wgcna.
 }
-\examples{
-wgcna_heatmaps(MEs, datExpr, datTraits)
-}
 

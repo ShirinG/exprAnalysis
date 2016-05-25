@@ -9,9 +9,6 @@
 #' @param pathway.id KEGG pathway identification number.
 #' @param out.suffix Output suffix to be added to file name.
 #' @return Three output files are produced for each pathway: An .xml, a .png of the pathway and a .png of the pathway with DE genes and their fold change.
-#' @examples
-#' pathview_func(DEgenes=DEgenes_pw, pathway.id = "04620", out.suffix = "DE_TolLPS")
-#'                            #Toll-like-receptor signaling
 #' @export
 pathview_func <- function(DEgenes, logFCcolumn="logFC", pathway.id, out.suffix){
 

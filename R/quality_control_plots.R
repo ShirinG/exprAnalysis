@@ -6,8 +6,6 @@
 #' @param projectfolder Projectfolder. Creates a subfolder "QC" here and saves output to it.
 #' @param groupColumn Column name denoting treatment information
 #' @return Produces quality control plots.
-#' @examples
-#' quality_control_plots(eset)
 #' @export
 quality_control_plots <- function(eset, projectfolder=getwd(), groupColumn = "Sample_Group") {
 
