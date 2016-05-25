@@ -15,10 +15,6 @@
 #' When fragments=TRUE, data are read with readGAlignmentsList and returned in a GAlignmentsList class. This class holds 'mated pairs' as well as same-strand pairs, singletons, reads with unmapped pairs and other fragments. Because more records are kept, generally counts will be higher when fragments=TRUE.
 #' The term 'mated pairs' refers to records paired with the algorithm described on the ?readGAlignmentsList man page.
 #' @return Writes the count matrix as .txt to file and returns a DESeq data set, which can then be used further with DESeq2.
-#' @examples
-#' read_bam_to_countmatrix(sampleTable,
-#'                         gtffile = "Homo_sapiens.GRCh38.83.gtf",
-#'                         projectfolder = getwd(), outPrefix="Test")
 #' @export
 read_bam_to_countmatrix <- function(sampleTable, gtffile, projectfolder = getwd(), outPrefix, singleEnd=FALSE, ignore.strand=TRUE, fragments=TRUE){
 

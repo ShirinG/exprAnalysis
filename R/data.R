@@ -106,36 +106,6 @@
 #' @usage data(TFs)
 "TFs"
 
-
-#' Mapping data on KEGG species code and corresponding Bioconductor gene annotation package
-#'
-#' Data on KEGG species, including KEGG code, scientific name,
-#' common name, corresponding gene ID types, and gene annotation package
-#' names in Bioconductor
-#'
-#' @format korg is a character matrix of ~3000 rows and 6 columns. First 3 columns are KEGG species
-#' code, scientific name and common name, followed columns on gene ID types used
-#' for each species: entrez.gnodes ("1" or "0", whether EntrezGene is the
-#' default gene ID) and representative KEGG gene ID and EntrezGene ID.
-#'
-#' bods is a character matrix of 19 rows and 3 columns on the mapping
-#' between gene annotation package names in Bioconductor, common name and
-#' KEGG code of most common research species.
-#' @source
-#' http://www.genome.jp/kegg-bin/get_htext?br08601.keg
-#' http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
-#' @usage
-#' data(korg)
-#' data(bods)
-#' @examples
-#' data(korg)
-#' data(bods)
-#' head(korg)
-#' head(bods)
-#' @keywords datasets
-#' @aliases bods
-"korg"
-
 #' Module Eigengenes example data
 #'
 #' A dataset containing module eigengenes example data.
@@ -157,35 +127,3 @@
 #' @source WGCNA example data run.
 #' @usage data(MEs)
 "MEs"
-
-#' Example data output from WGCNA
-#'
-#' A dataset containing example output from WGCNA analysis.
-#'
-#' @format A data frame with 10000 rows and 21 variables. Rownames show sample names.
-#' \describe{
-#'   \item{input}{Gene name}
-#'   \item{ENTREZID}{ENTREZ ID}
-#'   \item{ENSEMBL}{ENSEMBL ID}
-#'   \item{moduleColors}{Module membership color}
-#'   \item{MM.blue}{Module membership value blue module}
-#'   \item{MM.brown}{Module membership value brown module}
-#'   \item{MM.pink}{Module membership value pink module}
-#'   \item{MM.red}{Module membership value red module}
-#'   \item{MM.green}{Module membership value green module}
-#'   \item{MM.magenta}{Module membership value magenta module}
-#'   \item{MM.black}{Module membership value black module}
-#'   \item{MM.yellow}{Module membership value yellow module}
-#'   \item{MM.purple}{Module membership value purple module}
-#'   \item{MM.turquoise}{Module membership value turquoise module}
-#'   \item{MM.grey}{Module membership value grey module}
-#'   \item{cor.Ctrl}{Correlation with control samples}
-#'   \item{cor.TolLPS}{Correlation with TolLPS samples}
-#'   \item{cor.TolS100A8}{Correlation with TolS100A8 samples}
-#'   \item{cor.ActLPS}{Correlation with ActLPS samples}
-#'   \item{cor.Tol}{Correlation with Tol samples}
-#'   \item{cor.ExPhenotype}{Correlation with ExPhenotype samples}
-#' }
-#' @source WGCNA example data output
-#' @usage data(dataOutput)
-"dataOutput"

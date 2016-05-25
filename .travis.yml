@@ -5,3 +5,27 @@ sudo: false
 cache: packages
 warnings_are_errors: false
 r: release
+bioc_packages:
+  - AnnotationDbi
+  - arrayQualityMetrics
+  - beadarray
+  - Biobase
+  - BiocParallel
+  - DESeq2
+  - DOSE
+  - GenomicAlignments
+  - GenomicFeatures
+  - GO.db
+  - impute
+  - pcaGoPromoter
+  - org.Hs.eg.db
+  - org.Mm.eg.db
+  - pathview
+  - preprocessCore
+  - Rsamtools
+  - SummarizedExperiment
+  - sva
+r_packages:
+  - WGCNA
+  - limma
+  - roxygen2
