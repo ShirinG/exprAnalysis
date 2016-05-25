@@ -27,10 +27,10 @@ Differential expression output table for the given comparison. The table and Ven
 This calculates the differentially expressed genes among pairwise group comparisons (one comparison at a time) and outputs results for DE genes only.
 }
 \examples{
-design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
+design <- as.matrix(data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
-             rep(1, 4)), row.names = colnames(expmatrix))
+             rep(1, 4)), row.names = colnames(expmatrix)))
 comparison="TolLPS-Ctrl"
-diff_limma_pairwise(expmatrix, design, comparison)
+diff_limma_pairwise_output <- diff_limma_pairwise(expmatrix, design, comparison)
 }
 

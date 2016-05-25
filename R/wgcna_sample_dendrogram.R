@@ -13,7 +13,7 @@
 #' datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
 #'              rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), row.names = colnames(expmatrix))
-#' wgcna_sample_dendrogram(expmatrix, datTraits)
+#' datExpr <- wgcna_sample_dendrogram(expmatrix, datTraits)
 #' @export
 wgcna_sample_dendrogram <- function(expmatrix, datTraits, thresholdZ.k=-2.5){
 

@@ -18,10 +18,10 @@ Returns batch corrected expression matrix.
 Removes batch effects in combined datasets using sva's ComBat() function.
 }
 \examples{
-pheno <- data.frame(sample=c(1:16), treatment=sub("(.*)(_[0-9])", "\\\\1", colnames(expmatrix)),
-                   batch=ifelse(grepl("Ctrl", colnames(expmatrix)) == TRUE, "1",
-                   ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")),
-                   row.names = colnames(expmatrix))
-batch_removal(expmatrix, pheno)
+test_expmatrix <- matrix(rnorm(100*30),nrow=100,ncol=8,
+                         dimnames=list(c(rownames(expmatrix[1:100,1:8])),
+                         c(colnames(expmatrix[1:100,1:8]))))
+pheno <- data.frame(batch=rep(c(1,2), 4), row.names = colnames(test_expmatrix))
+test_expmatrix <- batch_removal(expmatrix=test_expmatrix, pheno)
 }
 

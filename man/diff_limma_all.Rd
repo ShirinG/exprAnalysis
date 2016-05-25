@@ -27,10 +27,10 @@ Differential expression output table for all group comparisons - outputs informa
 This calculates the differentially expressed genes among all group comparisons.
 }
 \examples{
-design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
+design <- as.matrix(data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
-             rep(1, 4)), row.names = colnames(expmatrix))
+             rep(1, 4)), row.names = colnames(expmatrix)))
 groupcomparisons=c("TolLPS-Ctrl", "TollMRP8-Ctrl", "ActLPS-Ctrl")
-diff_limma_all(expmatrix, design, groupcomparisons)
+diff_limma_all_output <- diff_limma_all(expmatrix, design, groupcomparisons)
 }
 

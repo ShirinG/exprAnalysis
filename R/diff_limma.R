@@ -10,30 +10,31 @@
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Diff_limma".
 #' @return Differential expression output table for all group comparisons - outputs information for all genes, including non-significant ones.
 #' @examples
-#' design <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
+#' design <- as.matrix(data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolLPS = c(rep(0, 4), rep(1, 4),
 #'              rep(0, 8)), TollMRP8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),
-#'              rep(1, 4)), row.names = colnames(expmatrix))
+#'              rep(1, 4)), row.names = colnames(expmatrix)))
 #' groupcomparisons=c("TolLPS-Ctrl", "TollMRP8-Ctrl", "ActLPS-Ctrl")
-#' diff_limma_all(expmatrix, design, groupcomparisons)
+#' diff_limma_all_output <- diff_limma_all(expmatrix, design, groupcomparisons)
 #' @export
 diff_limma_all <- function(expmatrix, design, groupcomparisons, p.value=0.05, lfc=log2(1.5), projectfolder = getwd()){
 
-  if (!requireNamespace("limma", quietly = TRUE)) {
-    stop("limma needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
+  if (!requireNamespace("limma", quietly = TRUE)) {stop("limma needed for this function to work. Please install it.", call. = FALSE)}
 
+  if (!is.matrix(expmatrix)) {stop("Input expression matrix is not of class matrix. Please change it.", call. = FALSE)}
+  if (mode(design) != "numeric") {stop("Design is not a numeric matrix. Please change it.", call. = FALSE)}
+  if (mode(groupcomparisons) != "character") {stop("Groupcomparisons is not a character vector. Please change it.", call. = FALSE)}
+
+  # Create output folder if it doesn't already exist.
   if (!file.exists(file.path(projectfolder, "Diff_limma"))) {dir.create(file.path(projectfolder, "Diff_limma")) }
 
-  ##make pair-wise comparisons between the groups
-  #Differentially expressed genes can be found by
-
-  aw <- limma::arrayWeights(as.matrix(expmatrix), design)
+  ## make pair-wise comparisons between the groups
+  aw <- limma::arrayWeights(expmatrix, design)
   cont.matrix <- limma::makeContrasts(contrasts=groupcomparisons, levels=design)
 
-  fit <- limma::lmFit(as.matrix(expmatrix), design, weights=aw)
+  fit <- limma::lmFit(expmatrix, design, weights=aw)
   fit <- limma::eBayes(limma::contrasts.fit(fit, cont.matrix))
 
+  # Differentially expressed genes can be found by
   resultDiffGenes <- limma::decideTests(fit, p.value=p.value, lfc=lfc, adjust.method="BH")
   grDevices::pdf(file=file.path(projectfolder, "Diff_limma", "DiffAllGroups_vennDiagram.pdf"))
   limma::vennDiagram(resultDiffGenes)
@@ -51,3 +52,5 @@ diff_limma_all <- function(expmatrix, design, groupcomparisons, p.value=0.05, lf
 
   return(data.frame(AllGroups_Ftest_unfiltered))
 }
+
+# devtools::document()
