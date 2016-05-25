@@ -43,10 +43,10 @@ Imports:
     stats,
     SummarizedExperiment,
     sva,
-    utils
+    utils,
+    WGCNA
 Depends:
     R (>= 2.10),
-    WGCNA
 Suggests:
     dplyr,
     knitr,

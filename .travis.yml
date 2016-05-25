@@ -4,3 +4,7 @@ language: r
 sudo: false
 cache: packages
 warnings_are_errors: false
+bioc_required: true
+r:
+  - release
+  - bioc-release
