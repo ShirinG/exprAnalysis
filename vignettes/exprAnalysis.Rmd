@@ -152,10 +152,6 @@ read_bam_to_countmatrix() returns a DESeq data set that can directly be used wit
 In read_bam_to_countmatrix() fragments will be counted only once to each gene, even if they overlap multiple exons of a gene which may themselves be overlapping.
 
 ```{r countdata_bam, eval=FALSE}
-library(Rsamtools)
-library(GenomicAlignments)
-library(GenomicFeatures)
-
 # Locate alignment files
 dir <- getwd()
 filenames <- fileslist[grep(".*sorted.bam$", list.files(dir))]
