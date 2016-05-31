@@ -82,7 +82,7 @@ Beware that the vignette is rather large and thus takes a minute to compile. You
 
 ```{r library_install, eval=FALSE}
 # install package from github
-devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)
+devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "stable.version0.1.0")
 
 library("exprAnalysis")
 

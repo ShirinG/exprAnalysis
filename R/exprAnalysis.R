@@ -6,7 +6,7 @@
 #' @importFrom grDevices dev.off pdf rgb
 #' @importFrom graphics abline plot par box
 #' @importFrom stats as.dendrogram as.dist cor.test dist hclust lm model.matrix na.omit
-#' @importFrom utils write.table data
+#' @importFrom utils write.table data install.packages installed.packages
 NULL
 
 #roxygen2::roxygenise()
