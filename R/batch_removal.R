@@ -14,11 +14,7 @@
 #' @export
 batch_removal <- function(expmatrix, pheno){
 
-  list.of.packages <- c("sva")
-  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-  if(length(new.packages)>0) install.packages(new.packages)
-
-  #if (!requireNamespace("sva", quietly = TRUE)) {stop("sva needed for this function to work. Please install it.", call. = FALSE)}
+  if (!requireNamespace("sva", quietly = TRUE)) {stop("sva needed for this function to work. Please install it.", call. = FALSE)}
 
   if (!is.matrix(expmatrix)) {stop("Input expression matrix is not of class matrix. Please change it.", call. = FALSE)}
   if (!is.data.frame(pheno)) {stop("Input phenotype data is not of class data.frame Please change it.", call. = FALSE)}

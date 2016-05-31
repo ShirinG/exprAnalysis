@@ -92,6 +92,20 @@ vignette("exprAnalysis", package="exprAnalysis")
 vignette("CummeRbund", package="exprAnalysis")
 
 browseVignettes("exprAnalysis")
+
+# There might be problems with installation of packages. In order to install them manually:
+list.of.packages <- c("list", "of", "packages")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+
+# CRAN
+if(length(new.packages)>0) install.packages(new.packages)
+
+# Bioconductor
+if(length(new.packages)>0) {
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(new.packages)
+}
+
 ```
 
 -----------
