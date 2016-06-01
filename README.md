@@ -1,6 +1,6 @@
 [![Travis-CI Build Status](https://travis-ci.org/ShirinG/exprAnalysis.svg?branch=master)](https://travis-ci.org/ShirinG/exprAnalysis)
 
-# exprAnalyis
+# exprAnalysis
 
 This package implements methods to analyze and visualize expression data.
 
@@ -12,7 +12,7 @@ So far, it is only implemented for human and mouse data!
 It uses function from the following packages:
 
   + AnnotationDbi for annotating gene information
-  + beadarray for impoting Illumina expression chip files from GenomeStudio
+  + beadarray for importing Illumina expression chip files from GenomeStudio
   + clusterProfiler and DOSE for functional enrichment analysis
   + DESeq2 for differential expression analysis of raw count data
   + GenomicAlignments, GenomicFeatures, Rsamtools for reading bam files
@@ -29,7 +29,14 @@ Dr. Shirin Glander
 
 ## Installation ##
 
-`devtools::install_github("ShirinG/exprAnalysis",build_vignettes=TRUE)`
+```r
+# install package from github
+# either the latest stable release that passed TRAVIS CI check
+devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "stable.version0.1.0")
+
+# or the development version
+devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "master")
+```
 
 Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd.
 

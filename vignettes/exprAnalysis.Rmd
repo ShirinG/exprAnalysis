@@ -32,7 +32,7 @@ So far, it is implemented for human and mouse data!
 It uses function from the following packages:
 
   + AnnotationDbi for annotating gene information
-  + beadarray for impoting Illumina expression chip files from GenomeStudio
+  + beadarray for importing Illumina expression chip files from GenomeStudio
   + clusterProfiler and DOSE for functional enrichment analysis
   + DESeq2 for differential expression analysis of raw count data
   + GenomicAlignments, GenomicFeatures, Rsamtools for reading bam files
@@ -82,7 +82,11 @@ Beware that the vignette is rather large and thus takes a minute to compile. You
 
 ```{r library_install, eval=FALSE}
 # install package from github
+# either the latest stable release that passed TRAVIS CI check
 devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "stable.version0.1.0")
+
+# or the development version
+devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "master")
 
 library("exprAnalysis")
 
@@ -573,9 +577,6 @@ legend("bottom", c("mean module eigengenes", "replicate module eigengene values"
 
 ```
 
-
-
-
 -----------
 
 <br>
@@ -604,8 +605,54 @@ Example output files from diff_limma functions have been saved to the package da
 ```{r diff_limma_output, eval=FALSE}
 data("DEgenes_pw")
 data("Allgenes_limma_pw")
+
+
+# Export tables to Latex
+library(xtable)
+
+italic <- function(x){
+paste0('{\\emph{ ', x, '}}')
+}
+
+print(xtable(DEgenes_pw[1:10,], 
+       digits = 2,
+       caption = c("\\tt Long caption", "Short caption"),
+       label = "tab:testtable",
+       auto = TRUE),
+      caption.placement = "top",
+      sanitize.rownames.function = italic,
+      booktabs = TRUE,
+      floating = TRUE, 
+      latex.environments = "center",
+      include.rownames = TRUE,
+      scalebox = 0.8,
+      tabular.environment = "tabularx", width = "\\textwidth")
+
+# or to html
+print(xtable(DEgenes_pw[1:10,], 
+       digits = 2,
+       caption = c("Long caption", "Short caption"),
+       label = "tab:testtable",
+       auto = TRUE), type = "html", caption.placement = "top")
 ```
 
+<!-- html table generated in R 3.3.0 by xtable 1.8-2 package -->
+<!-- Wed Jun 01 08:44:34 2016 -->
+<table border=1>
+<caption align="top"> Long caption </caption>
+<tr> <th>  </th> <th> logFC </th> <th> CI.L </th> <th> CI.R </th> <th> AveExpr </th> <th> t </th> <th> P.Value </th> <th> adj.P.Val </th> <th> B </th> <th> ENTREZID </th> <th> ENSEMBL </th>  </tr>
+  <tr> <td> HCAR2 </td> <td align="right"> -1.60 </td> <td align="right"> -1.78 </td> <td align="right"> -1.41 </td> <td align="right"> 5.17 </td> <td align="right"> -18.38 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 16.91 </td> <td> 338442 </td> <td> ENSG00000182782 </td> </tr>
+  <tr> <td> LOC100996342 </td> <td align="right"> 2.54 </td> <td align="right"> 2.18 </td> <td align="right"> 2.90 </td> <td align="right"> 6.89 </td> <td align="right"> 15.03 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 14.33 </td> <td> 100996342 </td> <td> ENSG00000235478 </td> </tr>
+  <tr> <td> INPP4B </td> <td align="right"> -1.54 </td> <td align="right"> -1.77 </td> <td align="right"> -1.31 </td> <td align="right"> 4.80 </td> <td align="right"> -14.19 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 13.58 </td> <td> 8821 </td> <td> ENSG00000109452 </td> </tr>
+  <tr> <td> LOC100505549 </td> <td align="right"> -1.26 </td> <td align="right"> -1.45 </td> <td align="right"> -1.06 </td> <td align="right"> 3.11 </td> <td align="right"> -13.91 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 13.32 </td> <td> 100505549 </td> <td>  </td> </tr>
+  <tr> <td> FCGBP </td> <td align="right"> -2.06 </td> <td align="right"> -2.38 </td> <td align="right"> -1.75 </td> <td align="right"> 3.39 </td> <td align="right"> -13.87 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 13.28 </td> <td> 8857 </td> <td> ENSG00000275395 </td> </tr>
+  <tr> <td> ZSCAN31 </td> <td align="right"> -1.40 </td> <td align="right"> -1.63 </td> <td align="right"> -1.18 </td> <td align="right"> 3.44 </td> <td align="right"> -13.33 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 12.76 </td> <td> 64288 </td> <td> ENSG00000235109 </td> </tr>
+  <tr> <td> MIR3665 </td> <td align="right"> -1.32 </td> <td align="right"> -1.53 </td> <td align="right"> -1.11 </td> <td align="right"> 2.69 </td> <td align="right"> -13.27 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 12.70 </td> <td> 100500861 </td> <td> ENSG00000266325 </td> </tr>
+  <tr> <td> PTH2R </td> <td align="right"> -1.62 </td> <td align="right"> -1.90 </td> <td align="right"> -1.35 </td> <td align="right"> 3.69 </td> <td align="right"> -12.56 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 11.98 </td> <td> 5746 </td> <td> ENSG00000144407 </td> </tr>
+  <tr> <td> GCLC </td> <td align="right"> -2.42 </td> <td align="right"> -2.83 </td> <td align="right"> -2.00 </td> <td align="right"> 3.13 </td> <td align="right"> -12.27 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 11.66 </td> <td> 2729 </td> <td> ENSG00000001084 </td> </tr>
+  <tr> <td> SOX30 </td> <td align="right"> 2.54 </td> <td align="right"> 2.10 </td> <td align="right"> 2.98 </td> <td align="right"> 8.57 </td> <td align="right"> 12.19 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> <td align="right"> 11.59 </td> <td> 11063 </td> <td> ENSG00000039600 </td> </tr>
+   </table>
+  
 -----------
 
 <br>
@@ -921,8 +968,6 @@ phyper(SampleSuccesses -1, PopulationSuccesses, PopulationSize - PopulationSucce
 
 ```{r render, eval=FALSE, echo=FALSE}
 rmarkdown::render('vignettes/exprAnalysis.Rmd', output_file = 'U:/exprAnalysis_test/exprAnalysisVignette.html')
-
-browseVignettes(package = 'ExpressionAnalysis')
 ```
 
 
