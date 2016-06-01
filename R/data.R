@@ -106,6 +106,20 @@
 #' @usage data(TFs)
 "TFs"
 
+#' Transcription factors from human (published list)
+#'
+#' A dataset containing transcription factors from human (from paper: Automated Identification of Core Regulatory Genes in Human Gene Regulatory Networks. Vipin Narang et al. 2015. PLOS Comp Biol.)
+#'
+#' @format A data frame with 1374 rows and 3 variables. Rownames show gene names.
+#' \describe{
+#'   \item{Human}{Human TFs}
+#'   \item{NodeType}{0 = TF}
+#'   \item{GeneType}{gene type}
+#' }
+#' @source Automated Identification of Core Regulatory Genes in Human Gene Regulatory Networks. Vipin Narang et al. 2015. PLOS Comp Biol.
+#' @usage data(TFs_paper)
+"TFs_paper"
+
 #' Module Eigengenes example data
 #'
 #' A dataset containing module eigengenes example data.

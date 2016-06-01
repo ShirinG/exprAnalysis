@@ -872,6 +872,8 @@ compDO <- clusterProfiler::compareCluster(geneCluster   = venn_list,
 
 ## TF networks
 
+Organism can be human or mouse. For human, the longer published list of TFs is used; for mouse the shorter list provided by Bonn (for which I don't have any more info on where it comes from).
+
 This function produced two output files:
 
 - The .expression matrix of TF expression data. 
@@ -881,7 +883,7 @@ Set Minimum Correlation and Correlation metric (by default 0.7 and Pearson). The
 
 Open the TGF file in Cytoscape: Open network from file. Then got to Advanced Options: untick "Use first column names" and add " to "Other:". Now set Column 2 as Source and Column 5 as Target.
 
-- The node annotation table in .txt format.
+- Open the node annotation table in .txt format.
 
 In cytoscape, open table from file, import data as Node Table Columns. You can then customize the look of your network.
 

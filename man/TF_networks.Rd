@@ -5,7 +5,7 @@
 \title{TF_networks.}
 \usage{
 TF_networks(expmatrix, nodeAnno, GeneName = "row.names",
-  projectfolder = getwd(), outPrefix = "outPrefix")
+  projectfolder = getwd(), organism = "human", outPrefix = "outPrefix")
 }
 \arguments{
 \item{expmatrix}{An input matrix with gene names as row names and sample names as column names.}
@@ -15,6 +15,8 @@ TF_networks(expmatrix, nodeAnno, GeneName = "row.names",
 \item{GeneName}{Column name with Gene Symbol to be annotated to TF name.}
 
 \item{projectfolder}{File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Networks".}
+
+\item{organism}{Organism. Can be human or mouse. For human, the longer published list of TFs is used; for mouse the shorter list provided by Bonn (for which I don't have any more info on where it comes from).}
 
 \item{outPrefix}{Prefix added to output name.}
 }
