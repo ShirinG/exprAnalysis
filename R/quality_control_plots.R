@@ -13,10 +13,16 @@ quality_control_plots <- function(eset, projectfolder=getwd(), groupColumn = "Sa
 
   if (!file.exists(file.path(projectfolder, "QC"))) {dir.create(file.path(projectfolder, "QC"), recursive=T) }
 
+  preparedData = arrayQualityMetrics::prepdata(expressionset = eset,
+                          intgroup = groupColumn,
+                          do.logtransform = FALSE)
 
-  aqMetrics <- arrayQualityMetrics::arrayQualityMetrics(eset, outdir=file.path(projectfolder, "QC"),
-                                                        force=T, spatial=T, do.logtransform=F, intgroup=groupColumn,
-                                                        reporttitle = paste("arrayQualityMetrics report"))
+  bo = arrayQualityMetrics::aqm.boxplot(preparedData)
+  de = arrayQualityMetrics::aqm.density(preparedData)
+  qm = list("Boxplot" = bo, "Density" = de)
+
+  arrayQualityMetrics::aqm.writereport(modules = qm, reporttitle = "My example", outdir = file.path(projectfolder, "QC"),
+                  arrayTable = Biobase::pData(eset))
 
   closeAllConnections() # if arrayQualityMetrics produces error and leaves connection open
 

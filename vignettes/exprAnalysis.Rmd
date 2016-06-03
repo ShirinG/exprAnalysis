@@ -39,7 +39,7 @@ It uses function from the following packages:
   + pcaGoPromoter for principle component analysis
   + limma for differential expression analysis of normalised expression data
   + pathview for mapping KEGG pathways
-  + pheatmap for heatmaps
+  + gplots for heatmaps
   + sva for batch correction
   + WGCNA for coregulatory network determination
 
@@ -97,7 +97,7 @@ vignette("CummeRbund", package="exprAnalysis")
 
 browseVignettes("exprAnalysis")
 
-# There might be problems with installation of packages. In order to install them manually:
+# There might be problems with installation of some dependency packages (especially Bioconductor packages and WGCNA from CRAN). In order to install them manually:
 list.of.packages <- c("list", "of", "packages")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
@@ -155,7 +155,7 @@ If you have FPKM data (e.g. quantile normalized) from Cufflinks, treat the data 
 
 ### Cuffdiff
 
-See CummeRbund vignette CummeRbundVignette.html.
+See CummeRbund vignette included among the vignettes of this package **CummeRbundVignette.html**.
 
 -----------
 
@@ -165,9 +165,11 @@ See CummeRbund vignette CummeRbundVignette.html.
 
 If you want to do count data analysis, you can either produce a count matrix (e.g. with HTSeq) and proceed to DESeq2 analysis or you can produce the count table directly from the bam files and then proceed to DESeq2. 
 
-read_bam_to_countmatrix() returns a DESeq data set that can directly be used with the DEseq2 pipeline. Or you can manually load the count matrix that was saved by read_bam_to_countmatrix() and then go to DESeqDataFrameFromMatrix().
+**read_bam_to_countmatrix()** returns a DESeq data set that can directly be used with the DEseq2 pipeline. Or you can manually load the count matrix that was saved by **read_bam_to_countmatrix()** and then go to DESeqDataFrameFromMatrix().
 
-In read_bam_to_countmatrix() fragments will be counted only once to each gene, even if they overlap multiple exons of a gene which may themselves be overlapping.
+In **read_bam_to_countmatrix()** fragments will be counted only once to each gene, even if they overlap multiple exons of a gene which may themselves be overlapping.
+
+**read_bam_to_countmatrix()** uses the packages Rsamtools, GenomicAlignments, GenomicFeatures, Biobase and SummarizedExperiment.
 
 ```{r countdata_bam, eval=FALSE}
 # Locate alignment files
@@ -265,14 +267,19 @@ library(affy)
 dir <- getwd()
 
 # check, that you have the correct directory
-celfiles <- list.files(dir, recursive = TRUE)[grep(".*CEL$", list.files(dir, recursive = TRUE), ignore.case = TRUE)]
+celfiles <- file.path(dir, list.files(dir, recursive = TRUE)[grep(".*CEL$", list.files(dir, recursive = TRUE), ignore.case = TRUE)])
 
 affydata <- ReadAffy(filenames=celfiles)
-MAplot(affydata,plot.method="smoothScatter")
+affy::MAplot(affydata,plot.method="smoothScatter")
+eset <- affy::rma(affydata)
 
-eset <- rma(affydata)
+# If affy doesn' recognize the chip type, try the oligo package:
+library(oligo)
+rawData <- read.celfiles(celfiles)
+oligo::MAplot(rawData, plotFun=smoothScatter)
+eset <- backgroundCorrect(rawData, method="rma")
 
-quality_control_plots(eset, groupColumn=character(0))
+quality_control_plots(eset, groupColumn=c())
 
 # Optional: Remove bad quality probes/ genes and/ or samples
 
@@ -308,6 +315,8 @@ If you have Illumina intensity data, load it into GenomeStudio first:
 - Export ControlProbeProfile.txt: Choose columns AVG_Signal and Detection Pval
 - You also need the Samplesheet.csv
 
+**read_Illumina()** and **normalise_eset()** uses the R package beadarray.
+
 ```{r Illumina, eval=FALSE, include=FALSE}
 dataFile      <- file.path("U:", "exprAnalysis_test/SampleProbeProfile.txt")
 qcFile        <- file.path("U:", "exprAnalysis_test/ControlProbeProfile.txt")
@@ -339,6 +348,8 @@ expmatrix <- exprs(eset)
 
 # Batch correction
 
+**batch_removal()** uses the R package sva.
+
 ```{r batch_cor, eval=FALSE}
 pheno <- data.frame(sample=c(1:16), treatment=sub("(.*)(_[0-9])", "\\1", colnames(expmatrix)), batch=ifelse(grepl("Ctrl", colnames(expmatrix)) == TRUE, "1", ifelse(grepl("ActLPS", colnames(expmatrix)) == TRUE, "1", "2")), row.names = colnames(expmatrix))
 
@@ -354,6 +365,8 @@ expmatrix <- batch_removal(expmatrix, pheno)
 ## Variance vs mean gene expression across samples
 
 Plots variance against mean gene expression across samples and calculates the correlation of a linear regression model.
+
+**var_vs_mean()** uses the R package matrixStats.
 
 ```{r var_vs_mean, fig.width=6, fig.height=5}
 var_vs_mean(countmatrix)
@@ -382,7 +395,7 @@ corrgram::corrgram(Ctrl_cor, order=TRUE, lower.panel=corrgram::panel.pie,
 
 ## Principle Component Analysis
 
-Uses functions as implemented by **"pcaGoPromoter"**.
+Uses functions from the R package pcaGoPromoter.
 
 You can only plot the principle components using:
 
@@ -405,6 +418,8 @@ pca_plot_enrich(expmatrix, groups)
 <br>
 
 ## Heatmaps
+
+**heatmaps()** uses the R package gplots.
 
 Here, of the 30 most highly expressed genes.
 
@@ -461,7 +476,7 @@ heatmaply(hm)
 
 ### Hierarchical Clustering and outlier detection
 
-Uses adjacency matrix function from **"WGCNA"** and hierarchical clustering from **"flashClust"**.
+Uses adjacency matrix function from the R package WGCNA and hierarchical clustering from the R package flashClust.
 
 ```{r wgcna_sample_dendrogram, eval=TRUE, fig.width=8, fig.height=5}
 datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolPS = c(rep(0, 4), rep(1, 4),rep(0, 8)), TolS100A8 = c(rep(0, 8), rep(1, 4), rep(0, 4)), ActLPS = c(rep(0, 12),rep(1, 4)), Tol = c(rep(0, 4), rep(1, 8), rep(0, 4)), ExPhenotype = c(stats::rnorm(4, 10, 1),stats::rnorm(8, 25, 1),stats::rnorm(4, 50, 1)), row.names = colnames(expmatrix))
@@ -541,6 +556,8 @@ wgcna_heatmaps(MEs, datExpr, datTraits)
 
 ### Output file for gene ontology analysis
 
+**geneAnnotations()** uses the R package AnnotationDbi.
+
 ```{r wgcna_output, eval=FALSE}
 # Annotate
 genes = colnames(datExpr)
@@ -583,7 +600,7 @@ legend("bottom", c("mean module eigengenes", "replicate module eigengene values"
 
 # Differential expression analysis
 
-## DE analyis using limma
+## DE analyis using the R package limma
 
 For normalized expression data (FPKM from Cufflinks or intensities from expression chip arrays).
 
@@ -811,6 +828,8 @@ cnetplot(kk, categorySize="geneNum", foldChange=geneList)
 
 ## Pathview
 
+uses the R package pathview.
+
 For Toll-like-receptor signaling:
 
 ```{r pathview, eval=FALSE}
@@ -878,10 +897,10 @@ This function produced two output files:
 
 - The .expression matrix of TF expression data. 
 
-It will have to be opened with Biolayout3D: 
+It will have to be opened with **Biolayout3D**: 
 Set Minimum Correlation and Correlation metric (by default 0.7 and Pearson). Then choose a suitable correlation coefficient (Graph Degree Distribution should be close to linear). Save the resulting network as a TGF file.
 
-Open the TGF file in Cytoscape: Open network from file. Then got to Advanced Options: untick "Use first column names" and add " to "Other:". Now set Column 2 as Source and Column 5 as Target.
+Open the TGF file in **Cytoscape**: Open network from file. Then got to Advanced Options: untick "Use first column names" and add " to "Other:". Now set Column 2 as Source and Column 5 as Target.
 
 - Open the node annotation table in .txt format.
 
@@ -909,7 +928,7 @@ TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)
 
 - Go to Cytoscape
 
-- Apps -> BiNGO
+- Apps -> **BiNGO**
 
 - The BiNGO Settings panel pops up. Start by filling in a name for your cluster. This name will be used for creating the output file and the visualization of the results in Cytoscape.
 
@@ -973,7 +992,91 @@ rmarkdown::render('vignettes/exprAnalysis.Rmd', output_file = 'U:/exprAnalysis_t
 ```
 
 
-## Session Info
+# Citations
+
+>  Martin Morgan, Herve Pages, Valerie Obenchain and Nathaniel Hayden (2016). Rsamtools: Binary alignment (BAM), FASTA, variant
+  call (BCF), and tabix file import. R package version 1.24.0. http://bioconductor.org/packages/release/bioc/html/Rsamtools.html
+  
+> Lawrence M, Huber W, Pages H, Aboyoun P, Carlson M, et al. (2013) Software for Computing and Annotating Genomic Ranges. PLoS
+  Comput Biol 9(8): e1003118. doi:10.1371/journal.pcbi.1003118
+  
+> Martin Morgan, Valerie Obenchain, Michel Lang and Ryan Thompson (2016). BiocParallel: Bioconductor facilities for parallel
+  evaluation. R package version 1.6.2. https://github.com/Bioconductor/BiocParallel
+  
+> Martin Morgan, Valerie Obenchain, Jim Hester and Herve Pages (2016). SummarizedExperiment: SummarizedExperiment container. R package
+  version 1.2.2.
+
+> Michael I Love, Wolfgang Huber and Simon Anders (2014): Moderated estimation of fold change and dispersion for RNA-Seq data with
+  DESeq2. Genome Biology
+
+> Gautier, L., Cope, L., Bolstad, B. M., and Irizarry, R. A. 2004. affy---analysis of Affymetrix GeneChip data at the probe level.
+  Bioinformatics 20, 3 (Feb. 2004), 307-315.
+
+> Carvalho B. S., and Irizarry, R. A. 2010. A Framework for Oligonucleotide Microarray Preprocessing. Bioinformatics.
+
+> Kauffmann, A., Gentleman, R.,, Huber, W. (2009) arrayQualityMetrics--a bioconductor package for quality assessment of microarray
+  data. Bioinformatics, 25(3):415-6.
+
+> Dunning, M.J., Smith, M.L., Ritchie, M.E., Tavare, S. beadarray: R classes and methods for Illumina bead-based data, Bioinformatics.
+  2007, 23(16):2183-4.
+
+> Jeffrey T. Leek, W. Evan Johnson, Hilary S. Parker, Elana J. Fertig, Andrew E. Jaffe and John D. Storey (2016). sva: Surrogate
+  Variable Analysis. R package version 3.20.0.
+
+> Henrik Bengtsson (2016). matrixStats: Functions that Apply to Rows and Columns of Matrices (and to Vectors). R package version
+  0.50.2. https://CRAN.R-project.org/package=matrixStats
+
+> Kevin Wright (2015). corrgram: Plot a Correlogram. R package version 1.8. https://CRAN.R-project.org/package=corrgram
+
+> Hansen M, Gerds TA, Nielsen OH, Seidelin JB, Troelsen JT, et al. (2012) pcaGoPromoter - An R Package for Biological and Regulatory
+  Interpretation of Principal Components in Genome-Wide Gene Expression Data. PLoS ONE 7(2): e32394. doi:10.1371/journal.pone.0032394
+
+> Raivo Kolde (2015). pheatmap: Pretty Heatmaps. R package version 1.0.8. https://CRAN.R-project.org/package=pheatmap
+
+> Gregory R. Warnes, Ben Bolker, Lodewijk Bonebakker, Robert Gentleman, Wolfgang Huber Andy Liaw, Thomas Lumley, Martin Maechler, Arni
+  Magnusson, Steffen Moeller, Marc Schwartz and Bill Venables (2016). gplots: Various R Programming Tools for Plotting Data. R package
+  version 3.0.1. https://CRAN.R-project.org/package=gplots
+
+> Tal Galili (2016). heatmaply: Interactive Heat Maps Using 'plotly'. R package version 0.3.2.
+https://CRAN.R-project.org/package=heatmaply
+
+> Langfelder P and Horvath S, WGCNA: an R package for weighted correlation network analysis. BMC Bioinformatics 2008, 9:559
+doi:10.1186/1471-2105-9-559
+
+> Peter Langfelder, Steve Horvath (2012). Fast R Functions for Robust Correlations and Hierarchical Clustering. Journal of Statistical
+Software, 46(11), 1-17. URL http://www.jstatsoft.org/v46/i11/.
+
+> Herve Pages, Marc Carlson, Seth Falcon and Nianhua Li (2016). AnnotationDbi: Annotation Database Interface. R package version
+1.34.3.
+
+> Ritchie, M.E., Phipson, B., Wu, D., Hu, Y., Law, C.W., Shi, W., and Smyth, G.K. (2015). limma powers differential expression
+analyses for RNA-sequencing and microarray studies. Nucleic Acids Research 43(7), e47.
+
+> David B. Dahl (2016). xtable: Export Tables to LaTeX or HTML. R package version 1.8-2. https://CRAN.R-project.org/package=xtable
+
+> H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2009.
+
+> Kamil Slowikowski (2016). ggrepel: Repulsive Text and Label Geoms for 'ggplot2'. R package version 0.5.
+https://CRAN.R-project.org/package=ggrepel
+
+> Guangchuang Yu, Li-Gen Wang, Yanyan Han and Qing-Yu He. clusterProfiler: an R package for comparing biological themes among gene
+clusters. OMICS: A Journal of Integrative Biology 2012, 16(5):284-287
+
+> Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an R/Bioconductor package for Disease Ontology Semantic and
+Enrichment analysis. Bioinformatics 2015 31(4):608-609
+
+> Marc Carlson (2016). org.Hs.eg.db: Genome wide annotation for Human. R package version 3.3.0.
+
+> Marc Carlson (2016). org.Mm.eg.db: Genome wide annotation for Mouse. R package version 3.3.0.
+
+> Luo, W. and Brouwer C., Pathview: an R/Bioconductor package for pathway-based data integration and visualization. Bioinformatics,
+2013, 29(14): 1830-1831, doi: 10.1093/bioinformatics/btt285
+
+> Yuanbin Ru and Katerina Kechris (2014). multiMiR: Integration of multiple microRNA-target databases with their disease and drug
+associations. R package version 1.0.1.
+
+
+# Session Info
 
 ```{r sessionInfo, echo=TRUE}
 sessionInfo()

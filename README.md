@@ -19,7 +19,7 @@ It uses function from the following packages:
   + pcaGoPromoter for principle component analysis
   + limma for differential expression analysis of normalised expression data
   + pathview for mapping KEGG pathways
-  + pheatmap for heatmaps
+  + gplots for heatmaps
   + sva for batch correction
   + WGCNA for coregulatory network determination
 
@@ -47,7 +47,7 @@ vignette("CummeRbund", package="exprAnalysis")
 
 browseVignettes("exprAnalysis")
 
-# There might be problems with installation of packages. In order to install them manually:
+# There might be problems with installation of some dependency packages (especially Bioconductor packages and WGCNA from CRAN). In order to install them manually:
 list.of.packages <- c("list", "of", "packages")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 
