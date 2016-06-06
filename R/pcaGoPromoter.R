@@ -20,10 +20,10 @@ pca_plot_enrich <- function(expmatrix, groups, PCs = c(1,2), main = "PCA plot", 
 
   if (!file.exists(file.path(projectfolder, "pcaGoPromoter"))) {dir.create(file.path(projectfolder, "pcaGoPromoter")) }
 
-    if (!requireNamespace("pcaGoPromoter", quietly = TRUE)) {
-      stop("pcaGoPromoter needed for this function to work. Please install it.",
-           call. = FALSE)
-    }
+  if (!requireNamespace("pcaGoPromoter", quietly = TRUE)) {
+    stop("pcaGoPromoter needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
 
   # Produce PCA
   pcaOutput <- pcaGoPromoter::pca(expmatrix, printDropped = FALSE, scale=TRUE, center=TRUE)
@@ -46,23 +46,33 @@ pca_plot_enrich <- function(expmatrix, groups, PCs = c(1,2), main = "PCA plot", 
     loadsPos <- names(load_PC_order[(nrow(load_PC_order)-percent+1):nrow(load_PC_order),])
 
     # TFs
-    TFtableNeg <- pcaGoPromoter::primo(loadsNeg, inputType = inputType, org = org, PvalueCutOff = 0.05, cutOff = 0.9, p.adjust.method = "fdr", printIgnored = FALSE , primoData = NULL)
-    utils::write.table(TFtableNeg$overRepresented, file.path(projectfolder, "pcaGoPromoter", paste0("TFtableNeg_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
+    TFtableNeg <- pcaGoPromoter::primo(loadsNeg, inputType = inputType, org = org, PvalueCutOff = 0.05, cutOff = 0.9, p.adjust.method = NULL, printIgnored = FALSE , primoData = NULL)
+    TFtableNeg <- TFtableNeg$overRepresented
+    TFtableNeg$p.adj <- stats::p.adjust(TFtableNeg$pValue, method = "BH")
+
+    utils::write.table(TFtableNeg, file.path(projectfolder, "pcaGoPromoter", paste0("TFtableNeg_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
     cat("\n-------------------------\n", "Table of enriched TFs of negative loadings of PC", PC, "saved to", file.path(projectfolder, paste0("TFtableNeg_PC_", PC, ".txt")), "\n-------------------------\n")
 
-    TFtablePos <- pcaGoPromoter::primo(loadsPos, inputType = inputType, org = org, PvalueCutOff = 0.05, cutOff = 0.9, p.adjust.method = "fdr", printIgnored = FALSE , primoData = NULL)
-    utils::write.table(TFtablePos$overRepresented, file.path(projectfolder, "pcaGoPromoter", paste0("TFtablePos_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
+    TFtablePos <- pcaGoPromoter::primo(loadsPos, inputType = inputType, org = org, PvalueCutOff = 0.05, cutOff = 0.9, p.adjust.method = NULL, printIgnored = FALSE , primoData = NULL)
+    TFtablePos <- TFtablePos$overRepresented
+    TFtablePos$p.adj <- stats::p.adjust(TFtablePos$pValue, method = "BH")
+
+    utils::write.table(TFtablePos, file.path(projectfolder, "pcaGoPromoter", paste0("TFtablePos_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
     cat("\n-------------------------\n", "Table of enriched TFs of positive loadings of PC", PC, "saved to", file.path(projectfolder, paste0("TFtablePos_PC_", PC, ".txt")), "\n-------------------------\n")
 
     # GO
-    GOtreeOutputPos <- pcaGoPromoter::GOtree(input = loadsPos, inputType = inputType, org = org, statisticalTest = "fisher", binomAlpha = 0.05, p.adjust.method = "fdr")
+    GOtreeOutputPos <- pcaGoPromoter::GOtree(input = loadsPos, inputType = inputType, org = org, statisticalTest = "fisher", binomAlpha = 0.05, p.adjust.method = NULL)
     sigGOTermsPos <- GOtreeOutputPos[["sigGOs"]]
-    utils::write.table(sigGOTermsPos, file.path(projectfolder, "pcaGoPromoter", paste0("sigGOTermsPos_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
+    sigGOTermsPos$p.adj <- stats::p.adjust(sigGOTermsPos$pValue, method = "BH")
+
+    utils::write.table(sigGOTermsPos[,c(1,2,3,4,6,5)], file.path(projectfolder, "pcaGoPromoter", paste0("sigGOTermsPos_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
     cat("\n-------------------------\n", "Table of enriched GO terms of positive loadings of PC", PC, "saved to", file.path(projectfolder, paste0("sigGOTermsPos_PC_", PC, ".txt")), "\n-------------------------\n")
 
-    GOtreeOutputNeg <- pcaGoPromoter::GOtree(input = loadsNeg, inputType = inputType, org = org, statisticalTest = "fisher", binomAlpha = 0.05, p.adjust.method = "fdr")
+    GOtreeOutputNeg <- pcaGoPromoter::GOtree(input = loadsNeg, inputType = inputType, org = org, statisticalTest = "fisher", binomAlpha = 0.05, p.adjust.method = NULL)
     sigGOTermsNeg <- GOtreeOutputNeg[["sigGOs"]]
-    utils::write.table(sigGOTermsNeg, file.path(projectfolder, "pcaGoPromoter", paste0("sigGOTermsNeg_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
+    sigGOTermsNeg$p.adj <- stats::p.adjust(sigGOTermsNeg$pValue, method = "BH")
+
+    utils::write.table(sigGOTermsNeg[,c(1,2,3,4,6,5)], file.path(projectfolder, "pcaGoPromoter", paste0("sigGOTermsNeg_PC_", PC, ".txt")), col.names = T, row.names = F, sep = "\t")
     cat("\n-------------------------\n", "Table of enriched GO terms of negative loadings of PC", PC, "saved to", file.path(projectfolder, paste0("sigGOTermsNeg_PC_", PC, ".txt")), "\n-------------------------\n")
   }
 
