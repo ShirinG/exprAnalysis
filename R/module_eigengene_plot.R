@@ -37,7 +37,7 @@ module_eigengene_plot <- function(groups, MEs, color){
   for (i in 1:length(unique(groups))){
     graphics::points(y = MEs_color_replicates[grep(unique(groups)[i], MEs_color_replicates$groups),1], x=rep(bp[i],length(grep(unique(groups)[i], MEs_color_replicates$groups))), pch = 16, col = scales::alpha("black", 0.5))
   }
-  axis(1, at=bp, labels=as.character(unique(groups)))
+  graphics::axis(1, at=bp, labels=as.character(unique(groups)))
   box()
 }
 
