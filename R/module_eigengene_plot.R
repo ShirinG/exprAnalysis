@@ -12,6 +12,7 @@
 #' @export
 module_eigengene_plot <- function(groups, MEs, color){
 
+
   MEs_color <- MEs[,which(colnames(MEs) == paste0("ME", color)), drop=FALSE]
 
   traitsinfo <- cbind(MEs_color, groups)
@@ -20,7 +21,7 @@ module_eigengene_plot <- function(groups, MEs, color){
 
   for (i in 1:length(unique(groups))){
 
-    trait <- MEs_color[grep(unique(groups)[i], rownames(MEs_color)),1, drop = FALSE]
+    trait <- traitsinfo[grep(unique(groups)[i], traitsinfo$groups),, drop = FALSE]
 
     if (i == 1) {
       MEs_color_replicates <- trait
@@ -33,7 +34,10 @@ module_eigengene_plot <- function(groups, MEs, color){
   }
 
   bp <- graphics::barplot(MEs_color_mean[,1], ylab = "module eigengene values", ylim = c(min(MEs_color[,1])-0.2, max(MEs_color[,1])+0.2), main=paste0("Eigengenes of \n", color, " module"), col = "grey")
-  graphics::points(y = MEs_color_replicates[,1], x=rep(bp,each=length(unique(groups))), pch = 16, col = scales::alpha("black", 0.5))
+  for (i in 1:length(unique(groups))){
+    graphics::points(y = MEs_color_replicates[grep(unique(groups)[i], MEs_color_replicates$groups),1], x=rep(bp[i],length(grep(unique(groups)[i], MEs_color_replicates$groups))), pch = 16, col = scales::alpha("black", 0.5))
+  }
+  axis(1, at=bp, labels=as.character(unique(groups)))
   box()
 }
 

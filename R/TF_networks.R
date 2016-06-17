@@ -12,7 +12,7 @@
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "Networks".
 #' @param organism Organism. Can be human or mouse. For human, the longer published list of TFs is used; for mouse the shorter list provided by Bonn (for which I don't have any more info on where it comes from).
 #' @param outPrefix Prefix added to output name.
-#' @return A .expression output matrix of gene expression of transkription factors in dataset used as Biolayout3D input.
+#' @return A .expression output matrix of gene expression of transcription factors in dataset used as Biolayout3D input.
 #' And based on these TFs, it also produces a .txt with node annotations of e.g. logFC and differential expression (e.g. limma output)
 #' @examples
 #' TF_networks(expmatrix, nodeAnno=Allgenes_limma_pw)

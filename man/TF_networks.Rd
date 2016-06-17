@@ -21,7 +21,7 @@ TF_networks(expmatrix, nodeAnno, GeneName = "row.names",
 \item{outPrefix}{Prefix added to output name.}
 }
 \value{
-A .expression output matrix of gene expression of transkription factors in dataset used as Biolayout3D input.
+A .expression output matrix of gene expression of transcription factors in dataset used as Biolayout3D input.
 And based on these TFs, it also produces a .txt with node annotations of e.g. logFC and differential expression (e.g. limma output)
 }
 \description{
