@@ -43,7 +43,7 @@ diff_limma_pairwise <- function(expmatrix, design, comparison, p.value=log2(0.05
 
   Diff_Ftest <- limma::topTable(fit, confint=TRUE, p.value=p.value, lfc=lfc, adjust.method="BH", number=Inf)
 
-  utils::write.table(data.frame(Diff_Ftest), file.path(projectfolder, "Diff_limma", paste0("Diff_Ftest_", comparison, ".txt")), col.names = T, row.names = F, sep = "\t")
+  utils::write.table(data.frame(Diff_Ftest), file.path(projectfolder, "Diff_limma", paste0("Diff_Ftest_", comparison, ".txt")), col.names = T, row.names = T, sep = "\t")
   cat("\n-------------------------\n", "Differential Expression Analysis Output of", comparison, "groups (limma Ftest) were saved to", file.path(projectfolder, "Diff_limma", paste0("Diff_Ftest_", comparison, ".txt")), "\n-------------------------\n")
 
   return(data.frame(Diff_Ftest))
@@ -96,7 +96,7 @@ diff_limma_pw_unfiltered <- function(expmatrix, design, comparison, p.value=0.05
 
   Diff_Ftest_unfiltered <- limma::topTable(fit, confint=TRUE, p.value=1, adjust.method="BH", number=Inf)
 
-  utils::write.table(data.frame(Diff_Ftest_unfiltered), file.path(projectfolder, "Diff_limma", paste0("Unfiltered_Diff_Ftest_", comparison, ".txt")), col.names = T, row.names = F, sep = "\t")
+  utils::write.table(data.frame(Diff_Ftest_unfiltered), file.path(projectfolder, "Diff_limma", paste0("Unfiltered_Diff_Ftest_", comparison, ".txt")), col.names = T, row.names = T, sep = "\t")
   cat("\n-------------------------\n", "Differential Expression Analysis Output of", comparison, "groups (limma Ftest) were saved to", file.path(projectfolder, "Diff_limma", paste0("Unfiltered_Diff_Ftest_", comparison, ".txt")), "\n-------------------------\n")
 
   return(data.frame(Diff_Ftest_unfiltered))

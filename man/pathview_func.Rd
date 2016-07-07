@@ -4,7 +4,8 @@
 \alias{pathview_func}
 \title{pathview_func (from pathview functions).}
 \usage{
-pathview_func(DEgenes, logFCcolumn = "logFC", pathway.id, out.suffix)
+pathview_func(DEgenes, logFCcolumn = "logFC", pathway.id, out.suffix,
+  organism = "human")
 }
 \arguments{
 \item{DEgenes}{List of differentially expressed genes as output given by diff_limma_pairwise(). Rownames should be gene names (SMYBOLS).}
@@ -14,6 +15,8 @@ pathview_func(DEgenes, logFCcolumn = "logFC", pathway.id, out.suffix)
 \item{pathway.id}{KEGG pathway identification number.}
 
 \item{out.suffix}{Output suffix to be added to file name.}
+
+\item{organism}{Set organism. Defaults to human, can also be mouse.}
 }
 \value{
 Three output files are produced for each pathway: An .xml, a .png of the pathway and a .png of the pathway with DE genes and their fold change.

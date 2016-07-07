@@ -42,12 +42,12 @@ diff_limma_all <- function(expmatrix, design, groupcomparisons, p.value=0.05, lf
 
   DiffAllGroups_Ftest <- limma::topTable(fit, confint=TRUE, p.value=p.value, lfc=lfc, adjust.method="BH", number=Inf)
 
-  utils::write.table(data.frame(DiffAllGroups_Ftest), file.path(projectfolder, "Diff_limma", "DiffAllGroups_Ftest.txt"), col.names = T, row.names = F, sep = "\t")
+  utils::write.table(data.frame(DiffAllGroups_Ftest), file.path(projectfolder, "Diff_limma", "DiffAllGroups_Ftest.txt"), col.names = T, row.names = T, sep = "\t")
   cat("\n-------------------------\n", "Differential Expression Analysis Output of all groups (limma Ftest) were saved to", file.path(projectfolder, "Diff_limma", "DiffAllGroups_Ftest.txt"), "\n-------------------------\n")
 
   AllGroups_Ftest_unfiltered <- limma::topTable(fit, confint=TRUE, p.value=1, adjust.method="BH", number=Inf)
 
-  utils::write.table(data.frame(AllGroups_Ftest_unfiltered), file.path(projectfolder, "Diff_limma", "AllGroups_Ftest_unfiltered.txt"), col.names = T, row.names = F, sep = "\t")
+  utils::write.table(data.frame(AllGroups_Ftest_unfiltered), file.path(projectfolder, "Diff_limma", "AllGroups_Ftest_unfiltered.txt"), col.names = T, row.names = T, sep = "\t")
   cat("\n-------------------------\n", "Unfiltered Differential Expression Analysis Output of all groups (limma Ftest) were saved to", file.path(projectfolder, "Diff_limma", "AllGroups_Ftest_unfiltered.txt"), "\n-------------------------\n")
 
   return(data.frame(AllGroups_Ftest_unfiltered))
