@@ -4,12 +4,13 @@
 #'
 #' @param datExpr Tranposed input matrix with gene names as column names and sample names as row names.
 #' @param datTraits Phenotype data.
-#' @param MEs Module eigengenes.
+#' @param MEs Module eigengenes
+#' @param datKME Module membership.
 #' @param moduleColors Module colors.
 #' @param projectfolder File path where to save the output to. Defaults to working directory. Here, it saves the output to a subfolder called "WGCNA".
 #' @return Writes geneModuleMembership.txt and geneModuleMembershipPvalue.txt. Saves Intramodular analysis plots to pdf. Returns datKME.
 #' @export
-wgcna_modulememberships <- function(datExpr, datTraits, MEs, moduleColors, projectfolder = getwd()){
+wgcna_modulememberships <- function(datExpr, datTraits, MEs, datKME, moduleColors, projectfolder = getwd()){
 
   if (!requireNamespace("WGCNA", quietly = TRUE)) {
     stop("WGCNA needed for this function to work. Please install it.",
@@ -18,11 +19,7 @@ wgcna_modulememberships <- function(datExpr, datTraits, MEs, moduleColors, proje
 
   if (!file.exists(file.path(projectfolder, "WGCNA"))) {dir.create(file.path(projectfolder, "WGCNA")) }
 
-  # calculate the module membership values (aka. module eigengene based connectivity kME):
-  datKME <- WGCNA::signedKME(datExpr, MEs)  # equals geneModuleMembership
-  colnames(datKME) <- sub("kME", "MM.", colnames(datKME))
-
-  MMPvalue <- as.data.frame(WGCNA:: corPvalueStudent(as.matrix(datKME), nrow(datTraits)));
+  MMPvalue <- as.data.frame(WGCNA::corPvalueStudent(as.matrix(datKME), nrow(datTraits)))
   colnames(MMPvalue) <- sub("MM.", "p.MM.", colnames(MMPvalue))
 
   utils::write.table(datKME, file.path(projectfolder, "WGCNA", "geneModuleMembership.txt"), col.names = T, row.names = T, sep= "\t")
@@ -46,7 +43,7 @@ wgcna_modulememberships <- function(datExpr, datTraits, MEs, moduleColors, proje
     names(moduleTraitCor)[i] <- paste("WGCNA::cor",names(datTraits)[i], sep=".")
 
     # Calculation of correlation p-value independantly of type of correlation
-    moduleTraitPvalue[i] <- WGCNA:: corPvalueStudent(as.matrix(moduleTraitCor[i]), nrow(datTraits))  # not used for Dendrogram
+    moduleTraitPvalue[i] <- WGCNA::corPvalueStudent(as.matrix(moduleTraitCor[i]), nrow(datTraits))  # not used for Dendrogram
     colnames(moduleTraitPvalue)[i] <- paste0("p.", colnames(moduleTraitCor)[i])
   }
 
@@ -89,8 +86,6 @@ wgcna_modulememberships <- function(datExpr, datTraits, MEs, moduleColors, proje
     }
     grDevices::dev.off()
   }
-
-  return(datKME)
 }
 
 # devtools::document()

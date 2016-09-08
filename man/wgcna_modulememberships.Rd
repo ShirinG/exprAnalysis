@@ -4,7 +4,7 @@
 \alias{wgcna_modulememberships}
 \title{wgcna_modulememberships (from WGCNA functions).}
 \usage{
-wgcna_modulememberships(datExpr, datTraits, MEs, moduleColors,
+wgcna_modulememberships(datExpr, datTraits, MEs, datKME, moduleColors,
   projectfolder = getwd())
 }
 \arguments{
@@ -12,7 +12,9 @@ wgcna_modulememberships(datExpr, datTraits, MEs, moduleColors,
 
 \item{datTraits}{Phenotype data.}
 
-\item{MEs}{Module eigengenes.}
+\item{MEs}{Module eigengenes}
+
+\item{datKME}{Module membership.}
 
 \item{moduleColors}{Module colors.}
 

@@ -27,9 +27,9 @@ This package combines functions from various packages used to analyze and visual
   + It supports normalized input as e.g. from Cufflinks or expression chip arrays and raw count data from bam file input.
   + It supports mRNA, miRNA, protein or other expression data.
 
-So far, it is implemented for human and mouse data!
+So far, it is implemented for human and mouse data only!
 
-It uses function from the following packages:
+It uses functions from the following packages:
 
   + AnnotationDbi for annotating gene information
   + beadarray for importing Illumina expression chip files from GenomeStudio
@@ -76,7 +76,7 @@ enableWGCNAThreads()
 
 <br>
 
-## The package can be installed via github:
+## The package can be installed via Github:
 
 Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at [https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd](https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd).
 
@@ -118,7 +118,7 @@ if(length(new.packages)>0) {
 
 # Functions
 
-See package help (?functionname, ?data) for detailed description of functions and example datasets.
+See package help (?functionname, ?data) for detailed descriptions of functions and example datasets.
 
 -----------
 
@@ -472,7 +472,7 @@ heatmaply(hm)
 
 ## WGCNA
 
-<br>
+Check [WGCNA page](https://labs.genetics.ucla.edu/horvath/CoexpressionNetwork/) for detailed description of the WGCNA package.
 
 ### Hierarchical Clustering and outlier detection
 
@@ -483,7 +483,8 @@ datTraits <- data.frame(Ctrl = c(rep(1, 4), rep(0,12)), TolPS = c(rep(0, 4), rep
 
 datExpr <- wgcna_sample_dendrogram(expmatrix, datTraits)
 
-# Optional: Remove outlier samples and repeat
+# Optional: Remove outlier samples and repeats: All genes flagged for removal are saved to the object "remove_genes"
+#head(remove_genes)
 ```
 
 <br>
@@ -523,11 +524,11 @@ dev.off()
 ```{r wgcna_net, eval=FALSE}
 softpower = 30
 mergingThresh = 0.25
-net = blockwiseModules(datExpr,checkMissingData = TRUE,corType="bicor", # or pearson
-                       maxBlockSize=10000,networkType="signed",power=softpower,
-                       minModuleSize=30,maxPOutliers = 0.1,mergeCutHeight=mergingThresh,
-                       numericLabels=TRUE,saveTOMs=TRUE,randomSeed = 12345,
-                       pamRespectsDendro=FALSE,saveTOMFileBase="TESTexprsTOM")
+net = blockwiseModules(datExpr, checkMissingData = TRUE, corType = "bicor", # or pearson
+                       maxBlockSize = 10000, networkType = "signed", power = softpower,
+                       minModuleSize = 30, maxPOutliers = 0.1, mergeCutHeight = mergingThresh,
+                       numericLabels = TRUE, saveTOMs = TRUE, randomSeed = 12345,
+                       pamRespectsDendro = FALSE, saveTOMFileBase = "TESTexprsTOM")
 str(net)
 ```
 
@@ -545,7 +546,11 @@ MEs = orderMEs(MEs0)
 rownames(MEs) <- rownames(datExpr)
 write.table(MEs, "Automatic_ModuleEigengenes_numberLabel.txt", row.names=T, quote=F, sep="\t")
 
-datKME <- wgcna_modulememberships(datExpr, MEs, moduleColors)
+# calculate the module membership values (aka. module eigengene based connectivity kME):
+  datKME <- WGCNA::signedKME(datExpr, MEs)  # equals geneModuleMembership
+  colnames(datKME) <- sub("kME", "MM.", colnames(datKME))
+
+wgcna_modulememberships(datExpr, MEs, datKME, moduleColors)
 
 wgcna_heatmaps(MEs, datExpr, datTraits)
 ```

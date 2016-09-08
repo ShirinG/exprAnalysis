@@ -60,14 +60,15 @@ wgcna_sample_dendrogram <- function(expmatrix, datTraits, thresholdZ.k=-2.5){
   gsg = WGCNA::goodSamplesGenes(t(expmatrix), verbose = 3)
 
   # Optionally, print the gene and sample names that were removed:
-  if (sum(!gsg$goodGenes)>0){
-    dynamicTreeCut::printFlush(paste("Remove genes:", paste(names(t(expmatrix))[!gsg$goodGenes], collapse = ", ")))
+  if (length(which(gsg$goodGenes == FALSE))>0){
+    dynamicTreeCut::printFlush(paste("Remove genes:", paste(colnames(t(expmatrix))[which(gsg$goodGenes == FALSE)], collapse = ", ")))
+    assign("remove_genes", as.data.frame(colnames(t(expmatrix))[which(gsg$goodGenes == FALSE)]))
   } else {
     dynamicTreeCut::printFlush("All genes are okay!")
   }
 
-  if (sum(!gsg$goodSamples)>0){
-    dynamicTreeCut::printFlush(paste("Remove samples:", paste(rownames(t(expmatrix))[!gsg$goodSamples], collapse = ", ")))
+  if (length(which(gsg$goodSamples == FALSE))>0){
+    dynamicTreeCut::printFlush(paste("Remove samples:", paste(rownames(t(expmatrix))[which(gsg$goodSamples == FALSE)], collapse = ", ")))
   } else {
     dynamicTreeCut::printFlush("All samples are okay!")
   }
