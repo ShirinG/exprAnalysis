@@ -599,6 +599,29 @@ legend("bottom", c("mean module eigengenes", "replicate module eigengene values"
 
 ```
 
+```{r module_plot_ggplot, echo=FALSE, include=FALSE, eval=FALSE, fig.width=10, fig.height=15}
+
+library(tidyr)
+
+MEs$group <- rownames(MEs)
+MEs$group <- gsub("_[0-9]", "", MEs$group)
+colnames(MEs) <- gsub("ME", "", colnames(MEs))
+
+MEs_gather <- gather(MEs, key = "group")
+colnames(MEs_gather) <- c("group", "module", "value")
+
+library(ggplot2)
+
+summaryMEs_gather <- aggregate(value ~ module + group, data = MEs_gather, FUN= "mean" )
+summaryMEs_gather$sd <- aggregate(value ~ module + group, data = MEs_gather, FUN= "sd" )[,3]
+summaryMEs_gather$se <- summaryMEs_gather$sd/sqrt(4)
+
+module_col <- rep(as.character(unique(summaryMEs_gather$module)), each = 4)
+  
+print(ggplot(summaryMEs_gather, aes(x = factor(group), y = value)) + geom_bar(stat = "identity", position="dodge", fill=module_col) + theme_bw() + scale_x_discrete(limits=c("Ctrl", "TolLPS", "TolS100A8", "ActLPS")) + facet_wrap( ~ module, ncol=3) + geom_errorbar(aes(ymin=value-sd, ymax=value+se), width=.3, color="black") + labs(x="",y="mean module eigengenes +/- standard error") + theme(axis.title.y = element_text(size = rel(1.1), angle = 90)))
+
+```
+
 -----------
 
 <br>
