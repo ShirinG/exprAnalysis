@@ -547,8 +547,8 @@ rownames(MEs) <- rownames(datExpr)
 write.table(MEs, "Automatic_ModuleEigengenes_numberLabel.txt", row.names=T, quote=F, sep="\t")
 
 # calculate the module membership values (aka. module eigengene based connectivity kME):
-  datKME <- WGCNA::signedKME(datExpr, MEs)  # equals geneModuleMembership
-  colnames(datKME) <- sub("kME", "MM.", colnames(datKME))
+datKME <- WGCNA::signedKME(datExpr, MEs)  # equals geneModuleMembership
+colnames(datKME) <- sub("kME", "MM.", colnames(datKME))
 
 wgcna_modulememberships(datExpr, MEs, datKME, moduleColors)
 
