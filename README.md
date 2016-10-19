@@ -31,6 +31,9 @@ Dr. Shirin Glander
 
 ```r
 # install package from github
+install.packages("devtools")
+library(devtools)
+
 # either the latest stable release that passed TRAVIS CI check
 devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "stable.version0.1.0")
 
