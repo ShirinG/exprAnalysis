@@ -60,7 +60,7 @@ if(length(new.packages_bioconductor)>0) {
 }
 ```
 
-Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd.
+Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://shiring.github.io/rna-seq/microarray/2016/09/28/exprAnalysis.
 
 To view the vignette if you built it with the package:
 ```r
