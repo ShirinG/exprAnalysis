@@ -69,7 +69,6 @@ rm(list=ls(all=TRUE))
 orig_par <- par(no.readonly=T)
 
 options(stringsAsFactors = FALSE)
-enableWGCNAThreads()
 ```
 
 -----------
@@ -113,6 +112,8 @@ if(length(new.packages)>0) {
   biocLite(new.packages)
 }
 
+
+enableWGCNAThreads()
 ```
 
 -----------
