@@ -41,19 +41,11 @@ devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "st
 devtools::install_github("ShirinG/exprAnalysis", build_vignettes=TRUE, ref = "master")
 ```
 
-Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd.
+There might be problems with installation of some dependency packages (especially Bioconductor packages and WGCNA and its dependencies from CRAN). In order to install them manually:
 
-To view the vignette if you built it with the package:
 ```r
-vignette("exprAnalysis", package="exprAnalysis")
-vignette("CummeRbund", package="exprAnalysis")
-
-browseVignettes("exprAnalysis")
-
-# There might be problems with installation of some dependency packages (especially Bioconductor packages and WGCNA and its dependencies from CRAN). In order to install them manually:
-
 list.of.packages_bioconductor <- c("arrayQualityMetrics", "beadarray", "pcaGoPromoter", "limma", "pathview", "sva", "GO.db", "impute")
-list.of.packages_cran <- c("WGCNA", "roxygen2", testthat", "gplots")
+list.of.packages_cran <- c("WGCNA", "roxygen2", "testthat", "gplots")
 
 new.packages_bioconductor <- list.of.packages_bioconductor[!(list.of.packages_bioconductor %in% installed.packages()[,"Package"])]
 new.packages_cran <- list.of.packages_cran[!(list.of.packages_cran %in% installed.packages()[,"Package"])]
@@ -66,4 +58,14 @@ if(length(new.packages_bioconductor)>0) {
   source("https://bioconductor.org/biocLite.R")
   biocLite(new.packages_bioconductor)
 }
+```
+
+Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd.
+
+To view the vignette if you built it with the package:
+```r
+vignette("exprAnalysis", package="exprAnalysis")
+vignette("CummeRbund", package="exprAnalysis")
+
+browseVignettes("exprAnalysis")
 ```
