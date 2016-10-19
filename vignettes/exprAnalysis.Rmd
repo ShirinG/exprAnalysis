@@ -77,7 +77,7 @@ options(stringsAsFactors = FALSE)
 
 ## The package can be installed via Github:
 
-Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at [https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd](https://github.com/ShirinG/exprAnalysis/blob/master/vignettes/exprAnalysis.Rmd).
+Beware that the vignette is rather large and thus takes a minute to compile. You can also see the Vignette at [https://shiring.github.io/rna-seq/microarray/2016/09/28/exprAnalysis](https://shiring.github.io/rna-seq/microarray/2016/09/28/exprAnalysis).
 
 ```{r library_install, eval=FALSE}
 # install package from github
