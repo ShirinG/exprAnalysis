@@ -23,4 +23,6 @@ var_vs_mean <- function(expmatrix){
   abline(0, 1)
   abline(lm(log2(dispersion[,2]+1)~log2(dispersion[,1]+1)), lwd=2, col="red")
   print(cor.test(log2(dispersion[,1]+1), log2(dispersion[,2]+1)))
+  
+  return(dispersion)
 }
